@@ -1,0 +1,39 @@
+artifact_path: model
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.10.12
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.6.1
+is_signature_from_type_hint: false
+mlflow_version: 2.22.0
+model_size_bytes: 727928629
+model_uuid: 98114f77af624ccaaaf6c84c0a4baeba
+prompts: null
+run_id: 359dfc339a5541ba830ade905ec0b27b
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "category", "required": true}, {"type": "long",
+    "name": "gender", "required": true}, {"type": "double", "name": "transaction_hour",
+    "required": true}, {"type": "double", "name": "transaction_month", "required":
+    true}, {"type": "long", "name": "is_weekend", "required": true}, {"type": "double",
+    "name": "day_of_week", "required": true}, {"type": "double", "name": "part_of_day",
+    "required": true}, {"type": "double", "name": "age", "required": true}, {"type":
+    "double", "name": "distance", "required": true}, {"type": "double", "name": "city_pop_bin",
+    "required": true}, {"type": "double", "name": "amt_yeo_johnson", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "int64", "shape": [-1]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2025-05-16 09:23:44.157533'

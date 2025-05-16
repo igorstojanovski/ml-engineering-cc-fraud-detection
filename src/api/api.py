@@ -24,6 +24,10 @@ def load_model():
 # Load model at startup
 model = load_model()
 
+@app.route('/', methods=['GET'])
+def get():
+    return jsonify({"message": "API is up and running!"})
+
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint"""

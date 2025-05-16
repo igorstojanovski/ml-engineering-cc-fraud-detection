@@ -1,0 +1,20 @@
+FROM python:3.9-slim
+
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy source code
+COPY ./src ./src
+
+# Set environment variables
+ENV PYTHONPATH=/app
+ENV ML_FLOW_URI=http://mlflow:5000
+
+# Expose port for API
+EXPOSE 5001
+
+# Start the API server
+CMD ["python", "src/api/api.py"]

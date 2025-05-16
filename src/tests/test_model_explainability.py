@@ -8,7 +8,7 @@ import mlflow
 import mlflow.sklearn
 import matplotlib.pyplot as plt
 from src.libs.libs import SMOTESampler
-from src.constants import TARGET_COLUMN
+from src.constants import TARGET_COLUMN, MODEL_URI
 
 
 class TestModelExplainability(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestModelExplainability(unittest.TestCase):
     def setUpClass(cls):
         """Set up test data and model once for all test methods."""
         # Define model URI
-        cls.MODEL_URI = "/home/ezdonka/repos/BTH-ML/fraud-detection-ml-engineering/mlartifacts/916575967459298540/207203f762c54e97b6b116bc16360885/artifacts/model/"
+        cls.MODEL_URI = MODEL_URI
         
         # Load into DataFrame
         cls.train_preprocessed = pd.read_csv("train_preprocessed.csv")
