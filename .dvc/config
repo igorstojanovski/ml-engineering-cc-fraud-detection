@@ -1,0 +1,5 @@
+['remote "amazon"']
+    url = s3://cc-fraud-detection-2025
+['remote "minio-local"']
+    url = s3://cc-fraud-detection-data/
+    endpointurl = http://localhost:9000
