@@ -5,7 +5,7 @@ import src.constants
 params = {
     "ds_url": src.constants.VALIDATION_DATASET_URL,
     "output_filename": src.constants.VALIDATION_DATASET_FILE_NAME,
-    "context": "Validation",
+    "context": src.constants.VALIDATION_RUN_NAME,
     "name": "Fraud Detection in Credit Card Transactions - Validation Data Set / Preprocessed"
 }
 

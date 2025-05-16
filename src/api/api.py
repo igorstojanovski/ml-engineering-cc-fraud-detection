@@ -24,6 +24,11 @@ def load_model():
 # Load model at startup
 model = load_model()
 
+@app.route('/', methods=['GET'])
+def root():
+    """Root endpoint"""
+    return jsonify({"message": "Fraud Detection API is running"})
+
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint"""

@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  mlflow:
+    image: python:3.9-slim
+    container_name: mlflow-server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlartifacts:/mlartifacts
+      - ./mlruns:/mlruns
+    environment:
+      - MLFLOW_TRACKING_URI=http://localhost:5000
+    command: >
+      bash -c "pip install mlflow psycopg2-binary boto3 &&
+               mlflow server --host 0.0.0.0 --port 5000 --default-artifact-root /mlartifacts"
+    networks:
+      - ml-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: fraud-detection-api
+    restart: on-failure
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./mlartifacts:/mlartifacts
+    depends_on:
+      - mlflow
+    networks:
+      - ml-network
+
+networks:
+  ml-network:
+    #driver: bridge

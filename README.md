@@ -212,3 +212,155 @@ python -m src.client_example
 ```
 
 This will send sample requests to the API and display the responses.
+
+## Docker Setup
+
+This project includes Docker configuration for running both the MLflow tracking server and the Fraud Detection API.
+
+### Prerequisites
+
+- Docker and Docker Compose installed on your system
+- Git repository cloned locally
+
+### Running with Docker Compose
+
+1. Build and start the containers:
+   ```bash
+   docker compose up -d
+   ```
+
+2. Check if the services are running:
+   ```bash
+   docker compose ps
+   ```
+
+3. Access the services:
+   - MLflow UI: http://localhost:5000
+   - Fraud Detection API: http://localhost:5001/health
+
+4. Test the API using the client example:
+   ```bash
+   python src/api/client_example.py
+   ```
+
+5. Stop the containers:
+   ```bash
+   docker compose down --remove-orphans
+   ```
+
+### API Endpoints
+
+- `GET /health` - Health check endpoint
+- `POST /predict` - Make predictions on transaction data
+
+Example request for single prediction:
+```json
+{
+  "transaction_data": {
+    "category": 0.7692307692307693,
+    "gender": 1,
+    "transaction_hour": 0.5217391304347826,
+    "transaction_month": 0.0,
+    "is_weekend": 1,
+    "day_of_week": 0.5,
+    "part_of_day": 0.0,
+    "age": 0.4567901234567901,
+    "distance": 0.16205439081001802,
+    "city_pop_bin": 0.0,
+    "amt_yeo_johnson": 0.043759851582931636
+  }
+}
+```
+
+Example request for batch predictions:
+```json
+{
+  "transactions": [
+    {
+      "category": 0.7692307692307693,
+      "gender": 1,
+      "transaction_hour": 0.5217391304347826,
+      "transaction_month": 0.0,
+      "is_weekend": 1,
+      "day_of_week": 0.5,
+      "part_of_day": 0.0,
+      "age": 0.4567901234567901,
+      "distance": 0.16205439081001802,
+      "city_pop_bin": 0.0,
+      "amt_yeo_johnson": 0.043759851582931636
+    },
+    {
+      "category": 0.7692307692307693,
+      "gender": 0,
+      "transaction_hour": 0.5217391304347826,
+      "transaction_month": 0.0,
+      "is_weekend": 1,
+      "day_of_week": 0.5,
+      "part_of_day": 0.0,
+      "age": 0.18518518518518517,
+      "distance": 0.6949745858768592,
+      "city_pop_bin": 0.8,
+      "amt_yeo_johnson": 0.20283470583231186
+    }
+  ]
+}
+```
+## Docker Setup (Simplified)
+
+This project includes Docker configuration for running both the MLflow tracking server and the Fraud Detection API.
+
+### Prerequisites
+
+- Docker and Docker Compose installed on your system
+- Git repository cloned locally
+
+### Running with Docker Compose
+
+1. Build and start the containers:
+   ```bash
+   docker compose up -d
+   ```
+
+2. Check if the services are running:
+   ```bash
+   docker compose ps
+   ```
+
+3. Access the services:
+   - MLflow UI: http://localhost:5000
+   - Fraud Detection API: http://localhost:5001/health
+
+4. Test the API using the Docker client script:
+   ```bash
+   python docker-client.py
+   ```
+
+5. Stop the containers:
+   ```bash
+   docker compose down
+   ```
+
+### Troubleshooting
+
+If you encounter issues with Docker Compose:
+
+1. Make sure Docker daemon is running:
+   ```bash
+   systemctl status docker
+   ```
+
+2. Try restarting Docker:
+   ```bash
+   sudo systemctl restart docker
+   ```
+
+3. Check Docker Compose version:
+   ```bash
+   docker compose version
+   ```
+
+4. If you're using an older version of Docker Compose, use:
+   ```bash
+   docker-compose up -d
+   ```
+   instead of `docker compose up -d`
