@@ -213,6 +213,34 @@ python -m src.client_example
 
 This will send sample requests to the API and display the responses.
 
+## Environment Variables
+
+The application uses environment variables to configure access to external services.
+
+### Required Variables
+
+| Variable             | Description                         | Required |
+|----------------------|-------------------------------------|----------|
+| `VITE_OPENCAGE_TOKEN`| API key for OpenCage Geocoding      | ✅       |
+
+You can get a free API token from [https://opencagedata.com](https://opencagedata.com) — no payment method required.
+
+---
+
+### How to Set Up
+
+1. Copy the example file:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+2. Open .env and insert your token:
+
+   ```dotenv
+   VITE_OPENCAGE_TOKEN=your_opencage_api_key
+   ```
+
 ## Running locally with Docker Compose
 
 This project uses `docker-compose` to serve the production-ready frontend through Nginx, with proxying of `/api/*` requests to a locally running ML model.
