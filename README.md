@@ -1,4 +1,5 @@
 # fraud-detection-ml-engineering
+# fraud-detection-ml-engineering
 A repository for the PA2595 Machine Learning Engineering BTH Course
 
 ## API Usage
@@ -25,6 +26,10 @@ Returns the health status of the API and whether the model is loaded.
 ```
 POST /predict
 ```
+
+The API supports both raw transaction data and preprocessed data.
+
+##### Using Raw Transaction Data
 
 Example request body for a single transaction:
 ```json
@@ -115,30 +120,8 @@ The API also supports batch predictions by sending multiple transactions:
   ]
 }
 ```
-## API Usage with Preprocessed Data
 
-The project includes a REST API for making fraud predictions using the trained model. The API expects preprocessed data in the same format as the validation dataset.
-
-### Starting the API Server
-
-```bash
-python -m src.api.run_api
-```
-
-The API will be available at http://localhost:5001
-
-### API Endpoints
-
-#### Health Check
-```
-GET /health
-```
-Returns the health status of the API and whether the model is loaded.
-
-#### Make Prediction
-```
-POST /predict
-```
+##### Using Preprocessed Data
 
 Example request body for a single transaction:
 ```json
@@ -205,13 +188,17 @@ The API also supports batch predictions by sending multiple transactions:
 
 ### Testing the API
 
-You can test the API using the provided client example:
+You can test the API using the provided client examples:
 
 ```bash
-python -m src.client_example
+# Test with preprocessed data
+python -m src.api.client_example
+
+# Test with raw transaction data
+python -m src.api.raw_data_example
 ```
 
-This will send sample requests to the API and display the responses.
+These will send sample requests to the API and display the responses.
 
 ## Environment Variables
 

@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify
 import mlflow
 import mlflow.sklearn
 from src.constants import ML_FLOW_URI, MODEL_URI
+from src.libs.preprocessorLib import FraudDetectionConfig, create_preprocessing_pipeline
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -23,6 +24,10 @@ def load_model():
 
 # Load model at startup
 model = load_model()
+
+@app.route('/', methods=['GET'])
+def get():
+    return jsonify({"message": "API is up and running!"})
 
 @app.route('/health', methods=['GET'])
 def health():
@@ -161,33 +166,43 @@ def preprocess_data(df):
     - amt_yeo_johnson
     """
     try:
-        # Make a copy to avoid modifying the original
-        processed_df = df.copy()
-        
-        # Define the required columns in the exact order and format expected by the model
+        # Check if data is already preprocessed
         required_columns = [
             'category', 'gender', 'transaction_hour', 'transaction_month',
             'is_weekend', 'day_of_week', 'part_of_day', 'age',
             'distance', 'city_pop_bin', 'amt_yeo_johnson'
         ]
         
-        # Check if all required columns are present
-        missing_columns = [col for col in required_columns if col not in processed_df.columns]
-        if missing_columns:
-            raise ValueError(f"Missing required columns: {missing_columns}")
-        
-        # Ensure columns are in the exact order expected by the model
-        processed_df = processed_df[required_columns]
-        
-        # Convert data types to match what the model expects
-        # This is important as scikit-learn models can be sensitive to data types
-        for col in processed_df.columns:
-            processed_df[col] = processed_df[col].astype(float)
+        # If all required columns are present, data is already preprocessed
+        if all(col in df.columns for col in required_columns):
+            processed_df = df[required_columns].copy()
             
-        # Print the dataframe info for debugging
-        print(f"Preprocessed DataFrame columns: {processed_df.columns.tolist()}")
-        print(f"Preprocessed DataFrame shape: {processed_df.shape}")
+            # Convert data types to match what the model expects
+            for col in processed_df.columns:
+                processed_df[col] = processed_df[col].astype(float)
+                
+            print(f"Using already preprocessed data with shape: {processed_df.shape}")
+            return processed_df
         
+        # If raw data, apply preprocessing pipeline
+        print("Applying preprocessing pipeline to raw data")
+        
+        # Create config with default values
+        config = FraudDetectionConfig(
+            ds_url="",  # Not needed as we're not loading from file
+            output_filename="",  # Not saving to file
+            context="api",
+            name="API Prediction"
+        )
+        
+        # Create and apply preprocessing pipeline
+        preprocessor = create_preprocessing_pipeline(config)
+        
+        # Fit and transform the data
+        preprocessor.fit(df)
+        processed_df = preprocessor.transform(df)
+        
+        print(f"Preprocessed data shape: {processed_df.shape}")
         return processed_df
         
     except Exception as e:

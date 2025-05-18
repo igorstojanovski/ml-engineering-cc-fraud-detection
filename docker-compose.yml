@@ -26,7 +26,43 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"  # Linux compatibility
 
-  # model: # Please add your docker compose configuration for the model
+  mlflow:
+    image: python:3.9-slim
+    container_name: mlflow-server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlartifacts:/mlartifacts
+      - ./mlruns:/mlruns
+    environment:
+      - MLFLOW_TRACKING_URI=http://localhost:5000
+    command: >
+      bash -c "pip install mlflow psycopg2-binary boto3 &&
+               mlflow server --host 0.0.0.0 --port 5000 --default-artifact-root /mlartifacts"
+    networks:
+      - ml-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: fraud-detection-api
+    restart: on-failure
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./mlartifacts:/app/mlartifacts
+      - ./:/app
+    environment:
+      - ML_FLOW_URI=http://mlflow:5000
+      - MODEL_URI=/mlartifacts/282047854241216555/359dfc339a5541ba830ade905ec0b27b/artifacts/model
+    depends_on:
+      - mlflow
+    networks:
+      - ml-network
+
+networks:
+  ml-network:
 
 volumes:
   frontend-dist:
