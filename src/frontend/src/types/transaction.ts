@@ -1,4 +1,6 @@
-export interface TransactionData {
+import type { Dayjs } from "dayjs";
+
+export interface TransactionBaseData {
   cc_num: string;
   merchant: string;
   category: string;
@@ -14,11 +16,19 @@ export interface TransactionData {
   long: number;
   city_pop: number;
   job: string;
-  dob: string; // ISO 8601
+  dob: string | Dayjs; // ISO 8601
   trans_num: string;
   unix_time: number;
   merch_lat: number;
   merch_long: number;
+}
+
+export interface TransactionData extends TransactionBaseData {
+  dob: string;
+}
+
+export interface TransactionFormData extends TransactionBaseData {
+  dob: Dayjs;
 }
 
 export interface TransactionResponse {
