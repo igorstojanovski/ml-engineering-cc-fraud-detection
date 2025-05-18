@@ -8,9 +8,7 @@ import {
   Divider,
   Col,
   Row,
-  Collapse,
 } from "antd";
-import dayjs from "dayjs";
 import type {
   TransactionData,
   TransactionFormData,
@@ -19,6 +17,10 @@ import { AddressAutocomplete } from "./AddressAutocomplete.tsx";
 import type { OpenCageResult } from "../hooks/useGeocoding.ts";
 import { MerchantAutocomplete } from "./MerchantAutocomplete.tsx";
 import { SampleButtons } from "./SampleButtons.tsx";
+import {
+  createOrderedTransaction,
+  normalizeTransactionFormData,
+} from "../utils/orderTransaction.ts";
 
 type TransactionFormProps = {
   onSubmit: (data: TransactionData) => void;
@@ -37,10 +39,9 @@ export const TransactionForm = ({
   const [form] = Form.useForm<TransactionFormData>();
 
   const handleFinish = (values: TransactionFormData) => {
-    onSubmit({
-      ...values,
-      dob: dayjs(values.dob).format("YYYY-MM-DD"),
-    });
+    const data = normalizeTransactionFormData(values);
+
+    onSubmit(createOrderedTransaction(data));
   };
   const handleAddressSelect = (result: OpenCageResult) => {
     const {
@@ -63,12 +64,12 @@ export const TransactionForm = ({
 
     const {
       geometry: { lat, lng },
-      components: { neighbourhood, office },
+      components: { neighbourhood, office, shop },
     } = result;
     const values = {
       merch_lat: lat,
       merch_long: lng,
-      merchant: office ?? neighbourhood,
+      merchant: office ?? neighbourhood ?? shop,
     };
     form.setFieldsValue(values);
   };
@@ -128,107 +129,78 @@ export const TransactionForm = ({
       <Form.Item label="Search">
         <AddressAutocomplete onSelect={handleAddressSelect} />
       </Form.Item>
-      <Form.Item>
-        <Collapse size="small">
-          <Collapse.Panel key="location" header="Advanced location data">
-            <Form.Item
-              name="street"
-              label="Street"
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  name="city"
-                  label="City"
-                  rules={[{ required: true }]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  name="state"
-                  label="State"
-                  rules={[{ required: true }]}
-                >
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item name="zip" label="ZIP" rules={[{ required: true }]}>
-                  <Input />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col span={6}>
-                <Form.Item
-                  name="lat"
-                  label="Latitude"
-                  rules={[{ required: true }]}
-                >
-                  <InputNumber style={{ width: "100%" }} />
-                </Form.Item>
-              </Col>
-              <Col span={6}>
-                <Form.Item
-                  name="long"
-                  label="Longitude"
-                  rules={[{ required: true }]}
-                >
-                  <InputNumber style={{ width: "100%" }} />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="city_pop" label="City Population">
-                  <InputNumber style={{ width: "100%" }} />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Collapse.Panel>
-        </Collapse>
+
+      <Form.Item name="street" label="Street" rules={[{ required: true }]}>
+        <Input />
       </Form.Item>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Form.Item name="city" label="City" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+        </Col>
+        <Col span={6}>
+          <Form.Item name="state" label="State" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+        </Col>
+        <Col span={6}>
+          <Form.Item name="zip" label="ZIP" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={6}>
+          <Form.Item name="lat" label="Latitude" rules={[{ required: true }]}>
+            <InputNumber style={{ width: "100%" }} />
+          </Form.Item>
+        </Col>
+        <Col span={6}>
+          <Form.Item name="long" label="Longitude" rules={[{ required: true }]}>
+            <InputNumber style={{ width: "100%" }} />
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item name="city_pop" label="City Population">
+            <InputNumber style={{ width: "100%" }} />
+          </Form.Item>
+        </Col>
+      </Row>
 
       <Divider orientation="left">🏬 Merchant</Divider>
       <Form.Item label="Search">
         <MerchantAutocomplete onSelect={handleMerchantSelect} />
       </Form.Item>
-      <Form.Item>
-        <Collapse size="small">
-          <Collapse.Panel key="location" header="Advanced location data">
-            <Form.Item
-              name="merchant"
-              label="Merchant Name"
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item
-                  name="merch_lat"
-                  label="Merchant Latitude"
-                  rules={[{ required: true }]}
-                >
-                  <InputNumber style={{ width: "100%" }} />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="merch_long"
-                  label="Merchant Longitude"
-                  rules={[{ required: true }]}
-                >
-                  <InputNumber style={{ width: "100%" }} />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Collapse.Panel>
-        </Collapse>
+
+      <Form.Item
+        name="merchant"
+        label="Merchant Name"
+        rules={[{ required: true }]}
+      >
+        <Input />
       </Form.Item>
+      <Row gutter={16}>
+        <Col span={12}>
+          <Form.Item
+            name="merch_lat"
+            label="Merchant Latitude"
+            rules={[{ required: true }]}
+          >
+            <InputNumber style={{ width: "100%" }} />
+          </Form.Item>
+        </Col>
+        <Col span={12}>
+          <Form.Item
+            name="merch_long"
+            label="Merchant Longitude"
+            rules={[{ required: true }]}
+          >
+            <InputNumber style={{ width: "100%" }} />
+          </Form.Item>
+        </Col>
+      </Row>
+
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
@@ -268,11 +240,15 @@ export const TransactionForm = ({
         </Col>
       </Row>
       <Form.Item
-        name="unix_time"
-        label="Timestamp (Unix)"
+        name="trans_date_trans_time"
+        label="Transaction Date & Time"
         rules={[{ required: true }]}
       >
-        <InputNumber style={{ width: "100%" }} />
+        <DatePicker
+          showTime
+          format="YYYY-MM-DD HH:mm:ss"
+          style={{ width: "100%" }}
+        />
       </Form.Item>
 
       <Form.Item>

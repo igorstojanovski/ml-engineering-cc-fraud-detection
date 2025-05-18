@@ -1,6 +1,7 @@
 import type { Dayjs } from "dayjs";
 
 export interface TransactionBaseData {
+  trans_date_trans_time: string | Dayjs;
   cc_num: string;
   merchant: string;
   category: string;
@@ -25,10 +26,12 @@ export interface TransactionBaseData {
 
 export interface TransactionData extends TransactionBaseData {
   dob: string;
+  trans_date_trans_time: string;
 }
 
 export interface TransactionFormData extends TransactionBaseData {
   dob: Dayjs;
+  trans_date_trans_time: Dayjs;
 }
 
 export interface TransactionResponse {
