@@ -4,19 +4,67 @@ services:
   frontend:
     build:
       context: ./src/frontend
-      target: build
-    volumes:
-      - frontend-dist:/app/dist
+      dockerfile: Dockerfile
+      args:
+        VITE_OPENCAGE_TOKEN: ${VITE_OPENCAGE_TOKEN}
+    working_dir: /app
+    command: ["npm", "run", "preview", "--", "--port", "5173", "--host"]
+    ports:
+      - "5173:5173"
+    environment:
+      - API_HOST=host.docker.internal
+    networks:
+      - ml-network
 
   nginx:
     image: nginx:alpine
+    depends_on:
+      - api
+      - frontend
     ports:
       - "3000:80"
     volumes:
       - ./src/proxy/nginx.conf:/etc/nginx/conf.d/default.conf
-      - frontend-dist:/usr/share/nginx/html
     extra_hosts:
       - "host.docker.internal:host-gateway"  # Linux compatibility
+    networks:
+      - ml-network
+
+  mlflow:
+    image: python:3.9-slim
+    container_name: mlflow-server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlartifacts:/mlartifacts
+      - ./mlruns:/mlruns
+    environment:
+      - MLFLOW_TRACKING_URI=http://localhost:5000
+    command: >
+      bash -c "pip install mlflow psycopg2-binary boto3 &&
+               mlflow server --host 0.0.0.0 --port 5000 --default-artifact-root /mlartifacts"
+    networks:
+      - ml-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: fraud-detection-api
+    restart: on-failure
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./mlartifacts:/app/mlartifacts
+      - ./:/app
+    environment:
+      - ML_FLOW_URI=http://mlflow:5000
+      - MODEL_URI=/mlartifacts/282047854241216555/359dfc339a5541ba830ade905ec0b27b/artifacts/model
+    depends_on:
+      - mlflow
+    networks:
+      - ml-network
+
   minio:
     image: minio/minio
     container_name: minio
@@ -41,8 +89,10 @@ services:
       mc mb -p local/cc-fraud-detection-2025 ||
       echo 'Bucket already exists'
       "
-  # model: # Please add your docker compose configuration for the model
 
+networks:
+  ml-network:
+  
 volumes:
   frontend-dist:
   minio-data:

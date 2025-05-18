@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import { App as AntdApp, Layout, Typography } from "antd";
 import { TransactionForm } from "./components/TransactionForm";
 import { ResultCard } from "./components/ResultCard";
-import { useTransaction } from "./hooks/useTransactions.tsx";
+import { useTransaction } from "./hooks/useTransactions.ts";
 
 function App() {
-  const { error, isLoading, data, submit } = useTransaction();
+  const { error, isLoading, data, submit, reset } = useTransaction();
   const { message } = AntdApp.useApp();
 
   useEffect(() => {
@@ -15,12 +15,12 @@ function App() {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Layout.Header style={{ color: "#fff", fontSize: 18 }}>
-        ML Inference UI
+        ML Inference Demo
       </Layout.Header>
       <Layout.Content style={{ padding: "20px 48px" }}>
         <Typography.Title level={3}>Enter data for prediction</Typography.Title>
         <TransactionForm isLoading={isLoading} onSubmit={submit} />
-        <ResultCard result={data} />
+        <ResultCard result={data} onReset={reset} />
       </Layout.Content>
     </Layout>
   );
