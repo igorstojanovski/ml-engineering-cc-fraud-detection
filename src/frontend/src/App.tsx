@@ -15,7 +15,7 @@ function App() {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Layout.Header style={{ color: "#fff", fontSize: 18 }}>
-        ML Inference UI
+        ML Inference Demo
       </Layout.Header>
       <Layout.Content style={{ padding: "20px 48px" }}>
         <Typography.Title level={3}>Enter data for prediction</Typography.Title>
