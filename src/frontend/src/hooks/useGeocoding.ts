@@ -15,6 +15,7 @@ export type OpenCageResult = {
     town?: string;
     village?: string;
     state?: string;
+    shop?: string;
     suburb?: string;
     postcode?: string;
     country?: string;

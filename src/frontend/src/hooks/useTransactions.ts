@@ -9,6 +9,7 @@ export function useTransaction() {
   const [error, setError] = useState<void | Error>(undefined);
   const [data, setData] = useState<void | TransactionResponse>(undefined);
 
+  const reset = () => setData(undefined);
   const submit = async (payload: TransactionData) => {
     setIsLoading(true);
     setError(undefined);
@@ -39,5 +40,6 @@ export function useTransaction() {
     error,
     data,
     submit,
+    reset,
   };
 }

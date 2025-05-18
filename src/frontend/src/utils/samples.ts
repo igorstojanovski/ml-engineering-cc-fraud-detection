@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
-import type { TransactionFormData } from "./types/transaction.ts";
+import type { TransactionFormData } from "../types/transaction.ts";
 
 export const sample1: TransactionFormData = {
+  trans_date_trans_time: dayjs("2020-06-21 12:14:25"),
   first: "Alice",
   last: "Williams",
   gender: "F",
@@ -11,7 +12,7 @@ export const sample1: TransactionFormData = {
   category: "electronics",
   amt: 249.99,
   trans_num: "abc123-sample-1",
-  unix_time: 1650912000,
+  unix_time: 1592741665,
 
   street: "123 Broadway",
   city: "New York",
@@ -27,6 +28,7 @@ export const sample1: TransactionFormData = {
 };
 
 export const sample2: TransactionFormData = {
+  trans_date_trans_time: dayjs("2020-12-01 08:45:10"),
   first: "Bob",
   last: "Anderson",
   gender: "M",
@@ -36,7 +38,7 @@ export const sample2: TransactionFormData = {
   category: "groceries",
   amt: 42.95,
   trans_num: "xyz789-sample-2",
-  unix_time: 1650998400,
+  unix_time: 1606812310,
 
   street: "456 Elm St",
   city: "San Francisco",
