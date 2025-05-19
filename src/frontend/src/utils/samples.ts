@@ -52,3 +52,27 @@ export const sample2: TransactionFormData = {
   merch_long: -122.4173,
   cc_num: "9876543210987654",
 };
+
+export const fraudSample: TransactionFormData = {
+  trans_date_trans_time: dayjs("2020-06-21 12:14:33"),
+  cc_num: "3573030041201292",
+  merchant: "fraud_Sporer-Keebler",
+  category: "personal_care",
+  amt: 29.84,
+  first: "Joanne",
+  last: "Williams",
+  gender: "F",
+  street: "3638 Marsh Union",
+  city: "Altonah",
+  state: "UT",
+  zip: "84002",
+  lat: 40.3207,
+  long: -110.436,
+  city_pop: 302,
+  job: "Sales professional, IT",
+  dob: dayjs("1990-01-17"),
+  trans_num: "324cc204407e99f51b0d6ca0055005e7",
+  unix_time: 1371816873,
+  merch_lat: 39.450498,
+  merch_long: -109.960431,
+};
