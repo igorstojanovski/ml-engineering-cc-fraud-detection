@@ -1,10 +1,11 @@
 from src.libs.preprocessorLib import FraudDetectionConfig, main
-import src.constants
+
+from src import constants
 
 # Define your parameters
 params = {
-    "ds_url": src.constants.TRAIN_DATASET_URL,
-    "output_filename": src.constants.TRAIN_DATASET_FILE_NAME,
+    "ds_url": constants.TRAIN_DATASET_URL,
+    "output_filename": constants.TRAIN_DATASET_FILE_NAME,
     "context": "training",
     "name": "Fraud Detection in Credit Card Transactions - Training Data Set / Preprocessed"
 }

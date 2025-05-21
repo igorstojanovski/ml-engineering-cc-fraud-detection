@@ -1,14 +1,14 @@
-import mlflow
+import warnings
 
+import mlflow
 import pandas as pd
 import numpy as np
-from sklearn.pipeline import Pipeline
-from src.libs.libs import *
-import warnings
-warnings.filterwarnings('ignore')
 import matplotlib.pyplot as plt
 import seaborn as sns
-import src.constants
+from sklearn.pipeline import Pipeline
+
+from src.libs.libs import *
+from src import constants
 
 class FraudDetectionConfig:
     """Configuration class for Fraud Detection preprocessing parameters"""
@@ -18,8 +18,8 @@ class FraudDetectionConfig:
         output_filename,
         context,
         name,
-        mlflow_tracking_uri=src.constants.ML_FLOW_URI,
-        experiment_name=src.constants.EXPERIMENT_NAME
+        mlflow_tracking_uri=constants.ML_FLOW_URI,
+        experiment_name=constants.EXPERIMENT_NAME
     ):
         self.ds_url = ds_url
         self.output_filename = output_filename
@@ -239,7 +239,7 @@ def main(config):
 if __name__ == "__main__":
     # Configure preprocessing parameters
     config = FraudDetectionConfig(
-        ds_url="/home/ezdonka/repos/BTH-ML/fraud-detection/data/fraudTest.csv",
+        ds_url=constants.VALIDATION_DATASET_URL,
         output_filename="validation_preprocessed.csv",
         context="validation",
         name="Fraud Detection in Credit Card Transactions - Validation Data Set / Preprocessed"

@@ -1,0 +1,18 @@
+stages:
+  preprocess_train:
+    cmd: PYTHONPATH=. python src/dataprocessing/preprocessTrain.py
+    deps:
+    - data/training/fraudTrain.csv
+    - src/dataprocessing/preprocessTrain.py
+    outs:
+    - outputs/preprocessed/train_preprocessed.csv
+  train_model:
+    cmd: PYTHONPATH=. python src/models/LogisticRegression.py
+    deps:
+    - outputs/preprocessed/train_preprocessed.csv
+    - src/models/LogisticRegression.py
+    outs:
+    - outputs/models/logistic_model.pkl
+    metrics:
+    - outputs/metrics/logistic_metrics.json:
+        cache: false

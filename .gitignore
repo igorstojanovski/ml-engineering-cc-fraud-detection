@@ -1,2 +1,7 @@
 .idea
 .env
+.venv
+/metrics
+/outputs
+/src/__pycache__/
+*.pyc
