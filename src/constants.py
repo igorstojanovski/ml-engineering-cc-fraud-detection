@@ -3,11 +3,11 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 TRAIN_DATA_DIR = PROJECT_ROOT / "data" / "training"
-PROCESSED_DATA_DIR = PROJECT_ROOT / "data" / "processed"
+PROCESSED_DATA_DIR = PROJECT_ROOT / "outputs" / "preprocessed"
 
 
 EXPERIMENT_NAME = "Fraud Detection in Credit Card Transaction"
-TRAIN_DATASET_FILE_NAME = TRAIN_DATA_DIR / "fraudTrain.csv"
+TRAIN_DATASET_FILE_NAME = PROCESSED_DATA_DIR / "train_preprocessed.csv"
 TRAIN_DATASET_URL = TRAIN_DATA_DIR / "fraudTrain.csv"
 VALIDATION_DATASET_URL = TRAIN_DATA_DIR / "fraudTest.csv"
 BEST_MODEL_RUN_ID = "359dfc339a5541ba830ade905ec0b27b"
