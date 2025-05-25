@@ -3,5 +3,6 @@
 .venv
 /metrics
 /outputs
-/src/__pycache__/
+/mlruns
+/src/__pycache__
 *.pyc

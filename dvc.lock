@@ -9,7 +9,7 @@ stages:
       size: 351238196
     - path: src/dataprocessing/preprocessTrain.py
       hash: md5
-      md5: 8a3490f679960d3e909bf85582cd42f8
+      md5: 77b792507a78f0cf6251353d7037fb0d
       size: 474
     outs:
     - path: outputs/preprocessed/train_preprocessed.csv
@@ -25,14 +25,25 @@ stages:
       size: 181760450
     - path: src/models/LogisticRegression.py
       hash: md5
-      md5: b570cb75c806f4e178e4675e57e57c67
-      size: 6902
+      md5: 26cf81f760cc37efb15a9d5ab7d51619
+      size: 7050
     outs:
     - path: outputs/metrics/logistic_metrics.json
       hash: md5
-      md5: 4abccf48a29640b7ac09197ad63c4885
+      md5: 46c1fb10240ae868497c900b370e512f
       size: 395
     - path: outputs/models/logistic_model.pkl
       hash: md5
-      md5: b6b08fc03b5c0993ff59f3dd1388336b
-      size: 1035
+      md5: bf249f0e26760f3b2f77c84dba02c133
+      size: 1036
+    - path: outputs/models/logistic_model_run_metadata.json
+      hash: md5
+      md5: 8b29aa5c3fb9047bf83c0f4034e12dc6
+      size: 72
+  promote_model:
+    cmd: PYTHONPATH=. python src/models/PromoteLogisticRegression.py
+    deps:
+    - path: outputs/models/logistic_model_run_metadata.json
+      hash: md5
+      md5: 8b29aa5c3fb9047bf83c0f4034e12dc6
+      size: 72

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from flask import Flask, jsonify, request
 
-from src.constants import ML_FLOW_URI, MODEL_URI
+from src.constants import ML_FLOW_URI
 from src.libs.preprocessorLib import FraudDetectionConfig, create_preprocessing_pipeline
 
 # Initialize Flask app
@@ -22,7 +22,7 @@ def load_model():
     """
     Load the best model from MLflow model registry
     """
-    model_uri = MODEL_URI
+    model_uri = "models:/credit-fraud-logistic-regression/Production"
     model = mlflow.sklearn.load_model(model_uri)
     return model
 
