@@ -4,8 +4,7 @@ from imblearn.combine import SMOTETomek
 from imblearn.over_sampling import ADASYN, SMOTE
 from imblearn.under_sampling import TomekLinks
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.metrics import (accuracy_score, classification_report,
-                             confusion_matrix)
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler, PowerTransformer
 
 

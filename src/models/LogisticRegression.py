@@ -10,23 +10,35 @@ from pathlib import Path
 # 🛠️ Parallelism and memory control
 import joblib
 import matplotlib.pyplot as plt
+
 # 🧠 MLflow
 import mlflow
 import mlflow.sklearn
+
 # 📊 Data and plotting
 import pandas as pd
 import seaborn as sns
 from mlflow.models.signature import infer_signature
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (accuracy_score, classification_report,
-                             confusion_matrix, f1_score, precision_score,
-                             recall_score)
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
+
 # 🤖 Machine learning
 from sklearn.model_selection import GridSearchCV, train_test_split
 
 # 🧩 Project-specific
-from src.constants import (EXPERIMENT_NAME, ML_FLOW_URI, TARGET_COLUMN,
-                           TRAIN_DATASET_FILE_NAME)
+from src.constants import (
+    EXPERIMENT_NAME,
+    ML_FLOW_URI,
+    TARGET_COLUMN,
+    TRAIN_DATASET_FILE_NAME,
+)
 from src.libs.libs import SMOTESampler, print_score
 
 # 🔇 Suppress warnings

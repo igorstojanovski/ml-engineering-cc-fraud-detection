@@ -7,8 +7,7 @@ import pandas as pd
 from flask import Flask, jsonify, request
 
 from src.constants import ML_FLOW_URI, MODEL_URI
-from src.libs.preprocessorLib import (FraudDetectionConfig,
-                                      create_preprocessing_pipeline)
+from src.libs.preprocessorLib import FraudDetectionConfig, create_preprocessing_pipeline
 
 # Initialize Flask app
 app = Flask(__name__)

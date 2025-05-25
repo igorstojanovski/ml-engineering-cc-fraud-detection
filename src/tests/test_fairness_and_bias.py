@@ -4,8 +4,12 @@ import mlflow
 import mlflow.sklearn
 import numpy as np
 import pandas as pd
-from fairlearn.metrics import (MetricFrame, false_positive_rate,
-                               selection_rate, true_positive_rate)
+from fairlearn.metrics import (
+    MetricFrame,
+    false_positive_rate,
+    selection_rate,
+    true_positive_rate,
+)
 from sklearn.metrics import f1_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 

@@ -102,9 +102,11 @@ class TestDistributionDrift(unittest.TestCase):
                 "\nDistribution drift detected in the following features:\n"
             )
             for feature, ks_stat, p_value, alpha in failed_features:
-                failure_message += f"  - {feature}: KS-statistic={ks_stat:.6f}, "
-                f"p-value={p_value:.6f}, ""alpha={alpha:.3f}\n"
-
+                failure_message += (
+                    f"  - {feature}: KS-statistic={ks_stat:.6f}, "
+                    f"p-value={p_value:.6f}, "
+                    f"alpha={alpha:.3f}\n"
+                )
             if skipped_features:
                 failure_message += "\nSkipped features due to errors:\n"
                 for feature, error in skipped_features:
