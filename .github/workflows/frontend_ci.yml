@@ -27,7 +27,7 @@ jobs:
         with:
           path: |
             **/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('src/frontend/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
