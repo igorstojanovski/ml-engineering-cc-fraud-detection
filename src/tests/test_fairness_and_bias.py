@@ -108,38 +108,44 @@ class TestFairnessAndBias(unittest.TestCase):
             self.assertLessEqual(
                 precision_disparity,
                 self.max_disparity_threshold,
-                f"Precision disparity for {sensitive_column} exceeds threshold: {precision_disparity:.4f}"
+                f"Precision disparity for {sensitive_column} exceeds threshold: {
+                    precision_disparity:.4f}"
             )
 
             self.assertLessEqual(
                 recall_disparity,
                 self.max_disparity_threshold,
-                f"Recall disparity for {sensitive_column} exceeds threshold: {recall_disparity:.4f}"
+                f"Recall disparity for {sensitive_column} exceeds threshold: {
+                    recall_disparity:.4f}"
             )
 
             self.assertLessEqual(
                 f1_disparity,
                 self.max_disparity_threshold,
-                f"F1 disparity for {sensitive_column} exceeds threshold: {f1_disparity:.4f}"
+                f"F1 disparity for {sensitive_column} exceeds threshold: {
+                    f1_disparity:.4f}"
             )
 
             # Assert minimum performance for all groups
             self.assertGreaterEqual(
                 min_precision,
                 self.min_performance_threshold,
-                f"Minimum precision across {sensitive_column} groups below threshold: {min_precision:.4f}"
+                f"Minimum precision across {sensitive_column} groups below threshold: {
+                    min_precision:.4f}"
             )
 
             self.assertGreaterEqual(
                 min_recall,
                 self.min_performance_threshold,
-                f"Minimum recall across {sensitive_column} groups below threshold: {min_recall:.4f}"
+                f"Minimum recall across {sensitive_column} groups below threshold: {
+                    min_recall:.4f}"
             )
 
             self.assertGreaterEqual(
                 min_f1,
                 self.min_performance_threshold,
-                f"Minimum F1 across {sensitive_column} groups below threshold: {min_f1:.4f}"
+                f"Minimum F1 across {sensitive_column} groups below threshold: {
+                    min_f1:.4f}"
             )
 
     def test_fairlearn_metrics(self):
@@ -186,19 +192,22 @@ class TestFairnessAndBias(unittest.TestCase):
             self.assertLessEqual(
                 selection_rate_disparity,
                 self.max_disparity_threshold,
-                f"Selection rate disparity for {sensitive_column} exceeds threshold: {selection_rate_disparity:.4f}"
+                f"Selection rate disparity for {sensitive_column} exceeds threshold: {
+                    selection_rate_disparity:.4f}"
             )
 
             self.assertLessEqual(
                 tpr_disparity,
                 self.max_disparity_threshold,
-                f"True positive rate disparity for {sensitive_column} exceeds threshold: {tpr_disparity:.4f}"
+                f"True positive rate disparity for {sensitive_column} exceeds threshold: {
+                    tpr_disparity:.4f}"
             )
 
             self.assertLessEqual(
                 fpr_disparity,
                 self.max_disparity_threshold,
-                f"False positive rate disparity for {sensitive_column} exceeds threshold: {fpr_disparity:.4f}"
+                f"False positive rate disparity for {sensitive_column} exceeds threshold: {
+                    fpr_disparity:.4f}"
             )
 
     def test_demographic_parity(self):
@@ -235,7 +244,8 @@ class TestFairnessAndBias(unittest.TestCase):
             self.assertLessEqual(
                 selection_rate_disparity,
                 self.max_disparity_threshold,
-                f"Selection rate disparity for {sensitive_column} exceeds threshold: {selection_rate_disparity:.4f}"
+                f"Selection rate disparity for {sensitive_column} exceeds threshold: {
+                    selection_rate_disparity:.4f}"
             )
 
     def test_equalized_odds(self):
@@ -286,13 +296,15 @@ class TestFairnessAndBias(unittest.TestCase):
             self.assertLessEqual(
                 tpr_disparity,
                 self.max_disparity_threshold,
-                f"True positive rate disparity for {sensitive_column} exceeds threshold: {tpr_disparity:.4f}"
+                f"True positive rate disparity for {sensitive_column} exceeds threshold: {
+                    tpr_disparity:.4f}"
             )
 
             self.assertLessEqual(
                 fpr_disparity,
                 self.max_disparity_threshold,
-                f"False positive rate disparity for {sensitive_column} exceeds threshold: {fpr_disparity:.4f}"
+                f"False positive rate disparity for {sensitive_column} exceeds threshold: {
+                    fpr_disparity:.4f}"
             )
 
 

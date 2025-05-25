@@ -72,11 +72,13 @@ class TestFeatureImportance(unittest.TestCase):
                 f"Top feature '{row['Feature']}' should have importance of at least 5%"
             )
 
-        # Assert that top 5 features collectively account for significant portion of importance
+        # Assert that top 5 features collectively account for significant portion
+        # of importance
         top_importance_sum = top_features['Importance'].sum()
         self.assertGreaterEqual(
             top_importance_sum, 0.5,
-            f"Top 5 features should account for at least 50% of total importance, got {top_importance_sum:.2f}"
+            f"Top 5 features should account for at least 50% of total importance, got {
+                top_importance_sum:.2f}"
         )
 
     def test_generate_feature_importance_plot(self):

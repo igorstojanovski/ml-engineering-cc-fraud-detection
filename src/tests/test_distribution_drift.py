@@ -8,7 +8,8 @@ from src.constants import TARGET_COLUMN
 
 # Data Distribution Checks
 # Train vs. Test Distribution Drift
-# This test compares two continuous distributions to determine whether they are significantly different.
+# This test compares two continuous distributions to determine whether
+# they are significantly different.
 
 
 class TestDistributionDrift(unittest.TestCase):
@@ -92,7 +93,10 @@ class TestDistributionDrift(unittest.TestCase):
         if failed_features:
             failure_message = "\nDistribution drift detected in the following features:\n"
             for feature, ks_stat, p_value, alpha in failed_features:
-                failure_message += f"  - {feature}: KS-statistic={ks_stat:.6f}, p-value={p_value:.6f}, alpha={alpha:.3f}\n"
+                failure_message += f"  - {feature}: KS-statistic={
+                    ks_stat:.6f}, p-value={
+                    p_value:.6f}, alpha={
+                    alpha:.3f}\n"
 
             if skipped_features:
                 failure_message += "\nSkipped features due to errors:\n"
@@ -109,7 +113,10 @@ class TestDistributionDrift(unittest.TestCase):
 
         for column_name in self.columns:
             # Create a test method name based on the column name
-            test_name = f"test_feature_{column_name.replace(' ', '_').replace('-', '_')}"
+            test_name = f"test_feature_{
+                column_name.replace(
+                    ' ', '_').replace(
+                    '-', '_')}"
 
             # Define the test method with appropriate alpha based on column name
             def test_method(self, column=column_name):

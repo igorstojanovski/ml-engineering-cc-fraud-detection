@@ -43,7 +43,8 @@ class ChangeDataType(BaseEstimator, TransformerMixin):
 
 
 class DateTimeFeatures(BaseEstimator, TransformerMixin):
-    # Extracts date and time-related features like hour, month, day of the week, and part of the day.
+    # Extracts date and time-related features like hour, month, day of the
+    # week, and part of the day.
     def __init__(self, date_column, transaction_hour_bins, transaction_hour_labels):
         self.date_column = date_column
         self.transaction_hour_bins = transaction_hour_bins
@@ -89,7 +90,8 @@ class AgeFeature(BaseEstimator, TransformerMixin):
 
 
 class CalculateDistance(BaseEstimator, TransformerMixin):
-    # Calculates the distance between two geographical points using the Haversine formula.
+    # Calculates the distance between two geographical points using the
+    # Haversine formula.
     def __init__(self, lat_col, long_col, merch_lat_col, merch_long_col):
         self.lat_col = lat_col
         self.long_col = long_col
@@ -203,7 +205,8 @@ class ScaleFeatures(BaseEstimator, TransformerMixin):
 
     # Preprocessing pipeline
 
-# Class to oversample the minority class using the Synthetic Minority Over-sampling Technique (SMOTE)
+# Class to oversample the minority class using the Synthetic Minority
+# Over-sampling Technique (SMOTE)
 
 
 class SMOTESampler:
@@ -233,7 +236,8 @@ class ADASYN_Sampler:
         return X_resampled.assign(**{self.target_column: y_resampled})
 
 
-# Class to reduce data imbalance by removing Tomek Links (overlapping majority samples near minority samples)
+# Class to reduce data imbalance by removing Tomek Links (overlapping
+# majority samples near minority samples)
 class TomekLinksSampler:
     def __init__(self, target_column):
         self.target_column = target_column
@@ -247,13 +251,15 @@ class TomekLinksSampler:
         return X_resampled.assign(**{self.target_column: y_resampled})
 
 
-# Class to combine SMOTE oversampling and Tomek Links removal for handling imbalanced data
+# Class to combine SMOTE oversampling and Tomek Links removal for handling
+# imbalanced data
 class SMOTETomekSampler:
     def __init__(self, target_column):
         self.target_column = target_column
         self.sampler = SMOTETomek(random_state=random_state)
 
-    # Fits the sampler and resamples the data using a combination of SMOTE and Tomek Links
+    # Fits the sampler and resamples the data using a combination of SMOTE and
+    # Tomek Links
     def fit_resample(self, df):
         X = df.drop(columns=[self.target_column])
         y = df[self.target_column]
@@ -263,7 +269,8 @@ class SMOTETomekSampler:
 
 random_state = 15
 
-# Class to combine SMOTE oversampling and Tomek Links removal for handling imbalanced data
+# Class to combine SMOTE oversampling and Tomek Links removal for handling
+# imbalanced data
 
 
 class SMOTETomekSampler:
@@ -271,7 +278,8 @@ class SMOTETomekSampler:
         self.target_column = target_column
         self.sampler = SMOTETomek(random_state=random_state)
 
-    # Fits the sampler and resamples the data using a combination of SMOTE and Tomek Links
+    # Fits the sampler and resamples the data using a combination of SMOTE and
+    # Tomek Links
     def fit_resample(self, df):
         X = df.drop(columns=[self.target_column])
         y = df[self.target_column]

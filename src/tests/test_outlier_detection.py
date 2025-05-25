@@ -112,7 +112,9 @@ class TestOutlierDetection(unittest.TestCase):
         if problematic_features:
             warning_message = "\nFeatures with excessive outliers (>5%):\n"
             for feature, count, percentage, max_zscore in problematic_features:
-                warning_message += f"  - {feature}: {count} outliers ({percentage:.2f}%), max Z-score: {max_zscore:.2f}\n"
+                warning_message += f"  - {feature}: {count} outliers ({
+                    percentage:.2f}%), max Z-score: {
+                    max_zscore:.2f}\n"
 
             print(warning_message)
             print("Consider handling these outliers using clipping, transformation, or removal.")
@@ -136,7 +138,10 @@ class TestOutlierDetection(unittest.TestCase):
                 continue
 
             # Create a test method name based on the feature name
-            test_name = f"test_outliers_in_{feature.replace(' ', '_').replace('-', '_')}"
+            test_name = f"test_outliers_in_{
+                feature.replace(
+                    ' ', '_').replace(
+                    '-', '_')}"
 
             # Define the test method
             def test_method(self, feature=feature):
@@ -148,7 +153,9 @@ class TestOutlierDetection(unittest.TestCase):
                     self.assertLessEqual(
                         percentage, max_acceptable_percentage,
                         f"Excessive outliers detected in feature '{feature}': "
-                        f"{outliers} outliers ({percentage:.2f}%), max Z-score: {max_zscore:.2f}"
+                        f"{outliers} outliers ({
+                            percentage:.2f}%), max Z-score: {
+                            max_zscore:.2f}"
                     )
                 except Exception as e:
                     self.fail(f"Error testing feature '{feature}': {str(e)}")

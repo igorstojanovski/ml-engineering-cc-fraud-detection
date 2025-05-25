@@ -47,7 +47,8 @@ class TestModelExplainability(unittest.TestCase):
 
     def test_model_has_feature_importances(self):
         """Test that the model has built-in feature importances."""
-        # Check if model has feature_importances_ attribute (common in tree-based models)
+        # Check if model has feature_importances_ attribute (common in tree-based
+        # models)
         self.assertTrue(hasattr(self.model, 'feature_importances_'),
                         "Model should have built-in feature importances")
 

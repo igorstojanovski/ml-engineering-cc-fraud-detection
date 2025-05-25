@@ -45,7 +45,8 @@ warnings.filterwarnings('ignore')
 # Choose a safe temp folder regardless of OS
 joblib_temp = os.getenv("JOBLIB_TEMP_FOLDER", tempfile.gettempdir())
 
-# Optional: place joblib temp files under a subdir so they don’t mix with other temp files
+# Optional: place joblib temp files under a subdir so they don’t mix with
+# other temp files
 joblib_temp = Path(joblib_temp) / "joblib_tmp"
 joblib_temp.mkdir(parents=True, exist_ok=True)
 
@@ -75,10 +76,12 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
     smote_resampled_df = smote_sampler.fit_resample(train_preprocessed)
     print(f"SMOTE completed for train data")
 
-    # Select feature columns (independent variables) from the training data to create the training set
+    # Select feature columns (independent variables) from the training data to
+    # create the training set
     X_train_smote = smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
 
-    # Select target columns (dependent variables) from the training data to create the target set
+    # Select target columns (dependent variables) from the training data to
+    # create the target set
     y_train_smote = smote_resampled_df[TARGET_COLUMN]
 
     # random_state=42 to ensure reproducibility

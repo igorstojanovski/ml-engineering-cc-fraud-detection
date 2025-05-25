@@ -132,8 +132,20 @@ class TestNoiseSensitivity(unittest.TestCase):
 
         print("\nNoise Sensitivity Test - All Metrics:")
         print("-" * 80)
-        print(f"{'Noise':<8} {'F1 Score':<20} {'Accuracy':<20} {'Precision':<20} {'Recall':<20}")
-        print(f"{'Level':<8} {'Score (% Base)':<20} {'Score (% Base)':<20} {'Score (% Base)':<20} {'Score (% Base)':<20}")
+        print(
+            f"{
+                'Noise':<8} {
+                'F1 Score':<20} {
+                'Accuracy':<20} {
+                    'Precision':<20} {
+                        'Recall':<20}")
+        print(
+            f"{
+                'Level':<8} {
+                'Score (% Base)':<20} {
+                'Score (% Base)':<20} {
+                    'Score (% Base)':<20} {
+                        'Score (% Base)':<20}")
         print("-" * 80)
 
         # Store results for reporting
@@ -181,7 +193,8 @@ class TestNoiseSensitivity(unittest.TestCase):
         if failed_tests:
             failure_message = "\nModel performance degraded below acceptable levels:\n"
             for noise, metric, percentage in failed_tests:
-                failure_message += f"  - Noise level {noise}: {metric} dropped to {percentage:.1f}% of baseline\n"
+                failure_message += f"  - Noise level {noise}: {metric} dropped to {
+                    percentage:.1f}% of baseline\n"
 
             self.fail(failure_message)
 
@@ -222,7 +235,8 @@ class TestNoiseSensitivity(unittest.TestCase):
 
                 print(f"{feature:<30} {f1:<15.4f} {percentage:<15.2f}% {result:<10}")
 
-                # No assertion here - this is informational to identify sensitive features
+                # No assertion here - this is informational to identify sensitive
+                # features
             else:
                 print(f"{feature:<30} {'N/A':<15} {'N/A':<15} {'SKIPPED':<10}")
 
