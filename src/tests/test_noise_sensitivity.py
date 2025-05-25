@@ -114,7 +114,7 @@ class TestNoiseSensitivity(unittest.TestCase):
 
             # Assert that performance is above minimum acceptable level
             self.assertGreaterEqual(
-                percentage, 
+                percentage,
                 min_acceptable_performance * 100,
                 f"Model performance with noise level {noise_level} dropped below "
                 f"{min_acceptable_performance * 100}% of baseline"

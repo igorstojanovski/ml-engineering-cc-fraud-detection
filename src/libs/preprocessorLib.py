@@ -10,8 +10,10 @@ from sklearn.pipeline import Pipeline
 from src.libs.libs import *
 from src import constants
 
+
 class FraudDetectionConfig:
     """Configuration class for Fraud Detection preprocessing parameters"""
+
     def __init__(
         self,
         ds_url,
@@ -31,9 +33,11 @@ class FraudDetectionConfig:
         # Constants
         self.target_column = 'is_fraud'
         self.city_pop_bins = [0, 10000, 50000, 100000, 500000, 1000000, np.inf]
-        self.city_pop_labels = ['<10K', '10K-50K', '50K-100K', '100K-500K', '500K-1M', '>1M']
+        self.city_pop_labels = ['<10K', '10K-50K',
+                                '50K-100K', '100K-500K', '500K-1M', '>1M']
         self.transaction_hour_bins = [-1, 5, 11, 17, 21, 24]
-        self.transaction_hour_labels = ['Late Night', 'Morning', 'Afternoon', 'Evening', 'Night']
+        self.transaction_hour_labels = ['Late Night',
+                                        'Morning', 'Afternoon', 'Evening', 'Night']
         self.drop_columns = [
             'Unnamed: 0', 'trans_date_trans_time', 'cc_num', 'merchant', 'amt',
             'first', 'last', 'street', 'city', 'state', 'zip', 'lat', 'long',
@@ -42,6 +46,7 @@ class FraudDetectionConfig:
         self.categorical_features = [
             'category', 'gender', 'day_of_week', 'part_of_day', 'city_pop_bin'
         ]
+
 
 def load_and_split_data(config):
     """
@@ -57,6 +62,7 @@ def load_and_split_data(config):
     X_raw = dataframe.drop(columns=config.target_column, axis=1)
     y = dataframe[config.target_column]
     return X_raw, y, dataframe
+
 
 def create_preprocessing_pipeline(config):
     """
@@ -92,6 +98,7 @@ def create_preprocessing_pipeline(config):
         ('scale_features', ScaleFeatures()),
     ])
 
+
 def log_to_mlflow(config, preprocessed, fig1, fig2, fig3):
     """
     Logs the preprocessed datasets and related artifacts to MLflow.
@@ -118,6 +125,7 @@ def log_to_mlflow(config, preprocessed, fig1, fig2, fig3):
         mlflow.log_figure(fig2, "corelation_matrix.png")
         mlflow.log_figure(fig3, "percentage_per_category.png")
 
+
 def pie_chart_fraudulent_transactions(df, style="classic", plot_size=(6, 6)):
     # Show distribution of fraudulent vs non-fraudulent
     counts = df["is_fraud"].value_counts()
@@ -142,6 +150,7 @@ def pie_chart_fraudulent_transactions(df, style="classic", plot_size=(6, 6)):
 
     plt.close(fig)
     return fig
+
 
 def correlation_matrix(data, style="classic", plot_size=(50, 8)):
     """
@@ -174,38 +183,43 @@ def correlation_matrix(data, style="classic", plot_size=(50, 8)):
     plt.close(fig)
     return fig
 
+
 def percentage(data, style='classic', plot_size=(10, 6)):
     # Calculate the percentage of each category
-    a=data[data['is_fraud']==0]['category'].value_counts(normalize=True).to_frame().reset_index()
-    a.columns=['category','not fraud percentage']
+    a = data[data['is_fraud'] == 0]['category'].value_counts(
+        normalize=True).to_frame().reset_index()
+    a.columns = ['category', 'not fraud percentage']
 
-    b=data[data['is_fraud']==1]['category'].value_counts(normalize=True).to_frame().reset_index()
-    b.columns=['category','fraud percentage']
+    b = data[data['is_fraud'] == 1]['category'].value_counts(
+        normalize=True).to_frame().reset_index()
+    b.columns = ['category', 'fraud percentage']
 
-    ab=a.merge(b,on='category')
-    ab['diff']=ab['fraud percentage']-ab['not fraud percentage']
+    ab = a.merge(b, on='category')
+    ab['diff'] = ab['fraud percentage'] - ab['not fraud percentage']
 
     unique_categories = ab['category'].unique()
     palette = sns.color_palette("husl", len(unique_categories))
 
-    color_dict = dict(zip(unique_categories, palette))    
+    color_dict = dict(zip(unique_categories, palette))
     with plt.style.context(style):
         fig, ax = plt.subplots(figsize=plot_size)
 
-        sns.barplot(y='category', 
-                   x='diff', 
-                   data=ab.sort_values('diff', ascending=False), 
-                   hue='category', 
-                   legend=False,
-                   ax=ax)
+        sns.barplot(y='category',
+                    x='diff',
+                    data=ab.sort_values('diff', ascending=False),
+                    hue='category',
+                    legend=False,
+                    ax=ax)
 
         ax.set_xlabel('Percentage Difference')
         ax.set_ylabel('Transaction Category')
-        ax.set_title('Percentage Difference of Fraudulent over Non-Fraudulent Transactions by Category')
+        ax.set_title(
+            'Percentage Difference of Fraudulent over Non-Fraudulent Transactions by Category')
 
         plt.tight_layout()
 
         return fig
+
 
 def main(config):
     """
@@ -235,6 +249,7 @@ def main(config):
 
     # Log to MLflow
     log_to_mlflow(config, preprocessed, fig1, fig2, fig3)
+
 
 if __name__ == "__main__":
     # Configure preprocessing parameters

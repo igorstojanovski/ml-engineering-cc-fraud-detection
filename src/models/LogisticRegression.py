@@ -55,7 +55,7 @@ os.environ["JOBLIB_TEMP_FOLDER"] = str(joblib_temp)
 joblib.parallel_backend("loky")
 
 mlflow.set_tracking_uri(uri=ML_FLOW_URI)
-# start it on console with: 
+# start it on console with:
 # mlflow server --host 127.0.0.1 --port 8080
 
 # MLflow Experiment
@@ -78,29 +78,30 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
     # Select feature columns (independent variables) from the training data to create the training set
     X_train_smote = smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
 
-    # Select target columns (dependent variables) from the training data to create the target set 
+    # Select target columns (dependent variables) from the training data to create the target set
     y_train_smote = smote_resampled_df[TARGET_COLUMN]
 
     # random_state=42 to ensure reproducibility
-    X_train, X_test, y_train, y_test = train_test_split(X_train_smote, y_train_smote, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_train_smote, y_train_smote, test_size=0.3, random_state=42)
     # 1. Logistic Regression
     # Train model
     params_grid = {
-            "penalty": ["l1", "l2", "elasticnet", None],
-            "C": [0.01, 0.1, 1, 10, 100],
-            "solver": ["lbfgs", "saga", "liblinear"],
-            "max_iter": [100, 200, 500],
-        }
+        "penalty": ["l1", "l2", "elasticnet", None],
+        "C": [0.01, 0.1, 1, 10, 100],
+        "solver": ["lbfgs", "saga", "liblinear"],
+        "max_iter": [100, 200, 500],
+    }
 
     lr_model = LogisticRegression(solver='liblinear')
     safe_jobs = max(1, cpu_count() - 2)
     grid_search = GridSearchCV(
-                    estimator=lr_model,
-                    param_grid=params_grid,
-                    cv=3,
-                    n_jobs=safe_jobs,
-                    scoring='f1',  # Use F1 score for classification optimization
-                )
+        estimator=lr_model,
+        param_grid=params_grid,
+        cv=3,
+        n_jobs=safe_jobs,
+        scoring='f1',  # Use F1 score for classification optimization
+    )
     grid_search.fit(X_train, y_train)
     best_model = grid_search.best_estimator_
 
@@ -122,17 +123,21 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
     mlflow.log_metric("best_cv_score", grid_search.best_score_)
 
     # Step 1: get confusion matrix values
-    conf_matrix = confusion_matrix(y_test, test_prediction)   
+    conf_matrix = confusion_matrix(y_test, test_prediction)
     true_positive = conf_matrix[0][0]
     true_negative = conf_matrix[1][1]
     false_positive = conf_matrix[0][1]
     false_negative = conf_matrix[1][0]
 
-    train_precision_pos_class = precision_score(y_train, train_prediction, pos_label=1, zero_division=0)
-    test_precision_pos_class = precision_score(y_test, test_prediction, pos_label=1, zero_division=0)
+    train_precision_pos_class = precision_score(
+        y_train, train_prediction, pos_label=1, zero_division=0)
+    test_precision_pos_class = precision_score(
+        y_test, test_prediction, pos_label=1, zero_division=0)
 
-    train_recall_pos_class = recall_score(y_train, train_prediction, pos_label=1, zero_division=0)
-    test_recall_pos_class = recall_score(y_test, test_prediction, pos_label=1, zero_division=0)
+    train_recall_pos_class = recall_score(
+        y_train, train_prediction, pos_label=1, zero_division=0)
+    test_recall_pos_class = recall_score(
+        y_test, test_prediction, pos_label=1, zero_division=0)
 
     mlflow.log_metric("true_positive", true_positive)
     mlflow.log_metric("true_negative", true_negative)

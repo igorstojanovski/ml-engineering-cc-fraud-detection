@@ -1,5 +1,15 @@
+from src.constants import TARGET_COLUMN, DATA_URI
+import src.constants
+from xgboost import XGBClassifier
+from sklearn.model_selection import GridSearchCV
+from mlflow.models.signature import infer_signature
+import os
+import tempfile
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
 import mlflow
-import mlflow.sklearn  
+import mlflow.sklearn
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -10,24 +20,11 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
     confusion_matrix,
-    )
+)
 from src.libs.libs import *
 
 import warnings
 warnings.filterwarnings('ignore')
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.metrics import confusion_matrix
-import mlflow
-import tempfile
-import os
-from mlflow.models.signature import infer_signature
-from sklearn.model_selection import GridSearchCV
-from xgboost import XGBClassifier
-import src.constants
-
-from src.constants import TARGET_COLUMN, DATA_URI
 
 
 mlflow.set_tracking_uri(uri=src.constants.ML_FLOW_URI)
@@ -49,10 +46,11 @@ with mlflow.start_run(run_name="Xgboost_experiment") as run:
     # Select feature columns (independent variables) from the training data to create the training set
     X_train_smote = smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
 
-    # Select target columns (dependent variables) from the training data to create the target set 
+    # Select target columns (dependent variables) from the training data to create the target set
     y_train_smote = smote_resampled_df[TARGET_COLUMN]
     # random_state=42 to ensure reproducibility
-    X_train, X_test, y_train, y_test = train_test_split(X_train_smote, y_train_smote, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_train_smote, y_train_smote, test_size=0.3, random_state=42)
 
     # Train model
     xgb_model = XGBClassifier(n_jobs=-1, tree_method='hist', early_stopping_rounds=10)
@@ -68,15 +66,15 @@ with mlflow.start_run(run_name="Xgboost_experiment") as run:
     #         "gamma": [0, 0.1, 0.2],
     #     }
 
-    param_grid =  {
-            "n_estimators": [100],
-            "learning_rate": [0.1],
-            "max_depth": [6],
-            "min_child_weight": [3],
-            "subsample": [0.8],
-            "colsample_bytree": [0.8],
-            "gamma": [0.1],
-        }
+    param_grid = {
+        "n_estimators": [100],
+        "learning_rate": [0.1],
+        "max_depth": [6],
+        "min_child_weight": [3],
+        "subsample": [0.8],
+        "colsample_bytree": [0.8],
+        "gamma": [0.1],
+    }
 
     # mlflow.log_params(param_grid)
     # Create the grid search object
@@ -109,7 +107,7 @@ with mlflow.start_run(run_name="Xgboost_experiment") as run:
     mlflow.log_metric("best_cv_score", grid_search.best_score_)
 
     # Step 1: get confusion matrix values
-    conf_matrix = confusion_matrix(y_test, preds)   
+    conf_matrix = confusion_matrix(y_test, preds)
     true_positive = conf_matrix[0][0]
     true_negative = conf_matrix[1][1]
     false_positive = conf_matrix[0][1]

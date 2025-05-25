@@ -9,6 +9,8 @@ from src.constants import TARGET_COLUMN
 # Data Distribution Checks
 # Train vs. Test Distribution Drift
 # This test compares two continuous distributions to determine whether they are significantly different.
+
+
 class TestDistributionDrift(unittest.TestCase):
     """Test class to check for distribution drift between train and test sets."""
 
@@ -64,7 +66,8 @@ class TestDistributionDrift(unittest.TestCase):
 
         print("\nKS Test Results for All Columns:")
         print("-" * 80)
-        print(f"{'Column Name':<30} {'KS-statistic':<15} {'p-value':<15} {'Alpha':<10} {'Result':<10}")
+        print(
+            f"{'Column Name':<30} {'KS-statistic':<15} {'p-value':<15} {'Alpha':<10} {'Result':<10}")
         print("-" * 80)
 
         for column_name in self.columns:
@@ -74,7 +77,8 @@ class TestDistributionDrift(unittest.TestCase):
 
                 ks_stat, p_value = self.ks_test(column_name)
                 result = "PASS" if p_value > alpha else "FAIL"
-                print(f"{column_name:<30} {ks_stat:<15.6f} {p_value:<15.6f} {alpha:<10.3f} {result:<10}")
+                print(
+                    f"{column_name:<30} {ks_stat:<15.6f} {p_value:<15.6f} {alpha:<10.3f} {result:<10}")
 
                 if p_value <= alpha:
                     failed_features.append((column_name, ks_stat, p_value, alpha))

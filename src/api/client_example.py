@@ -14,6 +14,7 @@ API_URL = "http://127.0.0.1:5001"
 # Flag to track if we started the server
 server_process = None
 
+
 def start_api_server():
     """Start the API server if it's not already running"""
     global server_process
@@ -47,6 +48,7 @@ def start_api_server():
         print("Failed to start API server.")
         return False
 
+
 def stop_api_server():
     """Stop the API server if we started it"""
     global server_process
@@ -55,6 +57,7 @@ def stop_api_server():
         server_process.terminate()
         server_process.wait(timeout=5)
         print("API server stopped.")
+
 
 def test_health():
     """Test the health endpoint"""
@@ -66,6 +69,7 @@ def test_health():
     except requests.exceptions.ConnectionError:
         print("ERROR: Could not connect to API server. Make sure it's running.")
     print("-" * 50)
+
 
 def test_single_prediction():
     """Test a single prediction with real data from the validation_preprocessed.csv"""
@@ -101,6 +105,7 @@ def test_single_prediction():
         print(f"ERROR during single prediction test: {str(e)}")
 
     print("-" * 50)
+
 
 def test_batch_prediction():
     """Test batch predictions with real data from validation_preprocessed.csv"""
@@ -164,6 +169,7 @@ def test_batch_prediction():
         print(f"ERROR during batch prediction test: {str(e)}")
 
     print("-" * 50)
+
 
 if __name__ == "__main__":
     print("Testing Fraud Detection API...")

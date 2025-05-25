@@ -7,6 +7,7 @@ import json
 # API endpoint
 API_URL = "http://localhost:5001"
 
+
 def test_single_raw_prediction():
     """Test a single prediction with raw transaction data"""
     # Example raw transaction data
@@ -51,6 +52,7 @@ def test_single_raw_prediction():
         print(f"ERROR during single prediction test: {str(e)}")
 
     print("-" * 50)
+
 
 def test_batch_raw_prediction():
     """Test batch predictions with raw transaction data"""
@@ -121,6 +123,7 @@ def test_batch_raw_prediction():
         print(f"ERROR during batch prediction test: {str(e)}")
 
     print("-" * 50)
+
 
 if __name__ == "__main__":
     print("Testing Fraud Detection API with raw data...")

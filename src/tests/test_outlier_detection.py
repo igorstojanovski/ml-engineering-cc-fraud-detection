@@ -85,7 +85,8 @@ class TestOutlierDetection(unittest.TestCase):
 
         for feature in self.columns:
             try:
-                outliers, percentage, max_zscore = self.detect_outliers_zscore(feature, threshold)
+                outliers, percentage, max_zscore = self.detect_outliers_zscore(
+                    feature, threshold)
 
                 # Determine status
                 if not np.issubdtype(self.X_train[feature].dtype, np.number):
@@ -93,11 +94,13 @@ class TestOutlierDetection(unittest.TestCase):
                     skipped_features.append((feature, "Non-numeric"))
                 elif percentage > max_acceptable_percentage:
                     status = "WARNING"
-                    problematic_features.append((feature, outliers, percentage, max_zscore))
+                    problematic_features.append(
+                        (feature, outliers, percentage, max_zscore))
                 else:
                     status = "OK"
 
-                print(f"{feature:<30} {outliers:<10} {percentage:<12.2f}% {max_zscore:<12.2f} {status:<10}")
+                print(
+                    f"{feature:<30} {outliers:<10} {percentage:<12.2f}% {max_zscore:<12.2f} {status:<10}")
 
             except Exception as e:
                 print(f"{feature:<30} Error: {str(e)}")
@@ -138,7 +141,8 @@ class TestOutlierDetection(unittest.TestCase):
             # Define the test method
             def test_method(self, feature=feature):
                 try:
-                    outliers, percentage, max_zscore = self.detect_outliers_zscore(feature, threshold)
+                    outliers, percentage, max_zscore = self.detect_outliers_zscore(
+                        feature, threshold)
 
                     # Assert that the percentage of outliers is within acceptable limits
                     self.assertLessEqual(

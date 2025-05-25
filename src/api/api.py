@@ -14,6 +14,8 @@ app = Flask(__name__)
 mlflow.set_tracking_uri(uri=ML_FLOW_URI)
 
 # Load the model at startup
+
+
 def load_model():
     """
     Load the best model from MLflow model registry
@@ -22,12 +24,15 @@ def load_model():
     model = mlflow.sklearn.load_model(model_uri)
     return model
 
+
 # Load model at startup
 model = load_model()
+
 
 @app.route('/', methods=['GET'])
 def get():
     return jsonify({"message": "API is up and running!"})
+
 
 @app.route('/health', methods=['GET'])
 def health():
@@ -35,6 +40,7 @@ def health():
     if model is not None:
         return jsonify({"status": "healthy", "model_loaded": True})
     return jsonify({"status": "unhealthy", "model_loaded": False}), 503
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -148,6 +154,7 @@ def predict():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 def preprocess_data(df):
     """
     Preprocess the input data to match the format expected by the model
@@ -209,6 +216,7 @@ def preprocess_data(df):
         print(f"Error in preprocessing: {e}")
         raise
 
+
 def haversine_distance(lat1, lon1, lat2, lon2):
     """
     Calculate the great circle distance between two points 
@@ -220,10 +228,11 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     # Haversine formula
     dlon = lon2 - lon1
     dlat = lat2 - lat1
-    a = np.sin(dlat/2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon/2)**2
+    a = np.sin(dlat / 2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2)**2
     c = 2 * np.arcsin(np.sqrt(a))
     r = 6371  # Radius of earth in kilometers
     return c * r
+
 
 if __name__ == '__main__':
     # Run the Flask app

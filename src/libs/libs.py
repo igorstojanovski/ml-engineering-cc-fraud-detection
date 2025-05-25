@@ -26,6 +26,7 @@ from sklearn.metrics import (
     make_scorer
 )
 
+
 class ChangeDataType(BaseEstimator, TransformerMixin):
     # Converts specified columns to datetime format.
     def __init__(self, columns):
@@ -40,13 +41,15 @@ class ChangeDataType(BaseEstimator, TransformerMixin):
             X[col] = pd.to_datetime(X[col], errors='coerce')
         return X
 
+
 class DateTimeFeatures(BaseEstimator, TransformerMixin):
     # Extracts date and time-related features like hour, month, day of the week, and part of the day.
     def __init__(self, date_column, transaction_hour_bins, transaction_hour_labels):
         self.date_column = date_column
         self.transaction_hour_bins = transaction_hour_bins
         self.transaction_hour_labels = transaction_hour_labels
-        self.new_columns = ['transaction_hour', 'transaction_month', 'is_weekend', 'day_of_week', 'part_of_day']
+        self.new_columns = ['transaction_hour', 'transaction_month',
+                            'is_weekend', 'day_of_week', 'part_of_day']
 
     def fit(self, X, y=None):
         return self
@@ -55,15 +58,16 @@ class DateTimeFeatures(BaseEstimator, TransformerMixin):
         X = X.copy()
         X['transaction_hour'] = X[self.date_column].dt.hour
         X['transaction_month'] = X[self.date_column].dt.month
-        X['is_weekend'] = X[self.date_column].dt.weekday.isin([5, 6]).round().astype('int64')
+        X['is_weekend'] = X[self.date_column].dt.weekday.isin(
+            [5, 6]).round().astype('int64')
 
         # Day of week: Monday=0, Sunday=6
         X['day_of_week'] = X[self.date_column].dt.day_name()
 
         # Part of day classification
-        X['part_of_day'] = pd.cut(X['transaction_hour'], 
-                                  bins=self.transaction_hour_bins, 
-                                  labels=self.transaction_hour_labels, 
+        X['part_of_day'] = pd.cut(X['transaction_hour'],
+                                  bins=self.transaction_hour_bins,
+                                  labels=self.transaction_hour_labels,
                                   right=True)
         return X
 
@@ -82,6 +86,7 @@ class AgeFeature(BaseEstimator, TransformerMixin):
         reference_date = pd.Timestamp(2020, 12, 31)
         X[self.new_column] = (reference_date - X[self.dob_column]).dt.days // 365
         return X
+
 
 class CalculateDistance(BaseEstimator, TransformerMixin):
     # Calculates the distance between two geographical points using the Haversine formula.
@@ -114,6 +119,7 @@ class CalculateDistance(BaseEstimator, TransformerMixin):
 
         return X
 
+
 class BinCityPopulation(BaseEstimator, TransformerMixin):
     # Groups city population into bins with specified labels.
     def __init__(self, city_pop_bins, city_pop_labels):
@@ -126,8 +132,10 @@ class BinCityPopulation(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         X = X.copy()
-        X[self.new_column] = pd.cut(X['city_pop'], bins=self.city_pop_bins, labels=self.city_pop_labels)
+        X[self.new_column] = pd.cut(
+            X['city_pop'], bins=self.city_pop_bins, labels=self.city_pop_labels)
         return X
+
 
 class YeoJohnsonTransformer(BaseEstimator, TransformerMixin):
     # Applies the Yeo-Johnson transformation to normalize the 'amt' column.
@@ -178,6 +186,7 @@ class LabelEncoding(BaseEstimator, TransformerMixin):
             X[col] = self.label_encoders[col].transform(X[col])
         return X
 
+
 class ScaleFeatures(BaseEstimator, TransformerMixin):
     # Scales numerical features to a range of 0 to 1 using MinMaxScaler.
     def __init__(self):
@@ -195,6 +204,8 @@ class ScaleFeatures(BaseEstimator, TransformerMixin):
     # Preprocessing pipeline
 
 # Class to oversample the minority class using the Synthetic Minority Over-sampling Technique (SMOTE)
+
+
 class SMOTESampler:
     def __init__(self, target_column):
         self.target_column = target_column
@@ -249,9 +260,12 @@ class SMOTETomekSampler:
         X_resampled, y_resampled = self.sampler.fit_resample(X, y)
         return X_resampled.assign(**{self.target_column: y_resampled})
 
+
 random_state = 15
 
 # Class to combine SMOTE oversampling and Tomek Links removal for handling imbalanced data
+
+
 class SMOTETomekSampler:
     def __init__(self, target_column):
         self.target_column = target_column
@@ -266,10 +280,12 @@ class SMOTETomekSampler:
 
 # 1. Logistic Regression
 
+
 def print_score(clf, X_train, y_train, X_test, y_test, train=True):
     if train:
         pred = clf.predict(X_train)
-        clf_report = pd.DataFrame(classification_report(y_train, pred, output_dict=True))
+        clf_report = pd.DataFrame(classification_report(
+            y_train, pred, output_dict=True))
         print("Train Result:\n================================================")
         print(f"Accuracy Score: {accuracy_score(y_train, pred) * 100:.2f}%")
         print("_______________________________________________")
@@ -277,10 +293,10 @@ def print_score(clf, X_train, y_train, X_test, y_test, train=True):
         print("_______________________________________________")
         print(f"Confusion Matrix: \n {confusion_matrix(y_train, pred)}\n")
 
-    elif train==False:
+    elif train == False:
         pred = clf.predict(X_test)
         clf_report = pd.DataFrame(classification_report(y_test, pred, output_dict=True))
-        print("Test Result:\n================================================")        
+        print("Test Result:\n================================================")
         print(f"Accuracy Score: {accuracy_score(y_test, pred) * 100:.2f}%")
         print("_______________________________________________")
         print(f"CLASSIFICATION REPORT:\n{clf_report}")
