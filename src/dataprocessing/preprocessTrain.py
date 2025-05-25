@@ -1,6 +1,5 @@
-from src.libs.preprocessorLib import FraudDetectionConfig, main
-
 from src import constants
+from src.libs.preprocessorLib import FraudDetectionConfig, main
 
 # Define your parameters
 params = {

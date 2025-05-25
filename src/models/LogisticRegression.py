@@ -1,47 +1,34 @@
 # ⚙️ Standard library
-import os
 import json
+import os
 import pickle
 import tempfile
-from pathlib import Path
-from multiprocessing import cpu_count
 import warnings
-
-# 📊 Data and plotting
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# 🤖 Machine learning
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    confusion_matrix,
-    classification_report,
-)
-from sklearn.pipeline import Pipeline
-
-# 🧠 MLflow
-import mlflow
-import mlflow.sklearn
-from mlflow.models.signature import infer_signature
+from multiprocessing import cpu_count
+from pathlib import Path
 
 # 🛠️ Parallelism and memory control
 import joblib
+import matplotlib.pyplot as plt
+# 🧠 MLflow
+import mlflow
+import mlflow.sklearn
+import numpy as np
+# 📊 Data and plotting
+import pandas as pd
+import seaborn as sns
+from mlflow.models.signature import infer_signature
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (accuracy_score, classification_report,
+                             confusion_matrix, f1_score, precision_score,
+                             recall_score)
+# 🤖 Machine learning
+from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.pipeline import Pipeline
 
 # 🧩 Project-specific
-from src.constants import (
-    TRAIN_DATASET_FILE_NAME,
-    TARGET_COLUMN,
-    DATA_URI,
-    ML_FLOW_URI,
-    EXPERIMENT_NAME,
-)
+from src.constants import (DATA_URI, EXPERIMENT_NAME, ML_FLOW_URI,
+                           TARGET_COLUMN, TRAIN_DATASET_FILE_NAME)
 from src.libs.libs import *
 
 # 🔇 Suppress warnings

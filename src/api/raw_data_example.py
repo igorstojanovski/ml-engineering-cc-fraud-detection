@@ -2,8 +2,9 @@
 Example of how to use the API with raw transaction data
 """
 
-import requests
 import json
+
+import requests
 
 # API endpoint
 API_URL = "http://localhost:5001"

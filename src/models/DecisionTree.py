@@ -1,29 +1,21 @@
-from src.constants import TARGET_COLUMN, DATA_URI
-from sklearn.model_selection import GridSearchCV
-from mlflow.models.signature import infer_signature
-import src.constants
 import os
 import tempfile
-from sklearn.metrics import confusion_matrix
-import seaborn as sns
+import warnings
+
 import matplotlib.pyplot as plt
 import mlflow
 import mlflow.sklearn
-
 import pandas as pd
+import seaborn as sns
+from mlflow.models.signature import infer_signature
+from sklearn.metrics import (accuracy_score, confusion_matrix, f1_score,
+                             precision_score, recall_score)
+from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    confusion_matrix,
-)
-from src.libs.libs import *
 
-import warnings
+import src.constants
+from src.constants import DATA_URI, TARGET_COLUMN
+from src.libs.libs import *
 
 warnings.filterwarnings("ignore")
 

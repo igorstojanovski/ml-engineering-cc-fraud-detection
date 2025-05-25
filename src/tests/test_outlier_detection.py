@@ -1,10 +1,12 @@
 import unittest
+
 import numpy as np
 import pandas as pd
 from scipy.stats import zscore
-from src.libs.libs import SMOTESampler
 from sklearn.model_selection import train_test_split
+
 from src.constants import TARGET_COLUMN
+from src.libs.libs import SMOTESampler
 
 
 class TestOutlierDetection(unittest.TestCase):

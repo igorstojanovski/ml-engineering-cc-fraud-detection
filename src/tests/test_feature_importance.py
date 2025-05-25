@@ -1,12 +1,14 @@
-import unittest
-import pandas as pd
-import matplotlib.pyplot as plt
 import os
-from sklearn.model_selection import train_test_split
-from src.libs.libs import SMOTESampler
-from src.constants import TARGET_COLUMN, MODEL_URI
+import unittest
+
+import matplotlib.pyplot as plt
 import mlflow
 import mlflow.sklearn
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+from src.constants import MODEL_URI, TARGET_COLUMN
+from src.libs.libs import SMOTESampler
 
 
 class TestFeatureImportance(unittest.TestCase):

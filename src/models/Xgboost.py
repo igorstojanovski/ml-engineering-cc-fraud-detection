@@ -1,29 +1,21 @@
-from src.constants import TARGET_COLUMN, DATA_URI
-import src.constants
-from xgboost import XGBClassifier
-from sklearn.model_selection import GridSearchCV
-from mlflow.models.signature import infer_signature
 import os
 import tempfile
-from sklearn.metrics import confusion_matrix
-import seaborn as sns
+import warnings
+
 import matplotlib.pyplot as plt
 import mlflow
 import mlflow.sklearn
-
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    confusion_matrix,
-)
-from src.libs.libs import *
+import seaborn as sns
+from mlflow.models.signature import infer_signature
+from sklearn.metrics import (accuracy_score, confusion_matrix, f1_score,
+                             precision_score, recall_score)
+from sklearn.model_selection import GridSearchCV, train_test_split
+from xgboost import XGBClassifier
 
-import warnings
+import src.constants
+from src.constants import DATA_URI, TARGET_COLUMN
+from src.libs.libs import *
 
 warnings.filterwarnings("ignore")
 

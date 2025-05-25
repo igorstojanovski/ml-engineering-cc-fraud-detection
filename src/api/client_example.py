@@ -2,12 +2,13 @@
 Example client script to demonstrate how to use the fraud detection API
 """
 
-import requests
 import json
-import time
-import subprocess
 import os
+import subprocess
 import sys
+import time
+
+import requests
 
 # API endpoint
 API_URL = "http://127.0.0.1:5001"

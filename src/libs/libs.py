@@ -1,30 +1,12 @@
-import pandas as pd
-
-
 import numpy as np
-
-
-from imblearn.over_sampling import SMOTE
-
-from sklearn.preprocessing import LabelEncoder
-
-from sklearn.preprocessing import PowerTransformer, LabelEncoder
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import MinMaxScaler
-from imblearn.over_sampling import SMOTE, ADASYN
-from imblearn.under_sampling import TomekLinks
+import pandas as pd
 from imblearn.combine import SMOTETomek
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    classification_report,
-    confusion_matrix,
-    roc_auc_score,
-    make_scorer,
-)
+from imblearn.over_sampling import ADASYN, SMOTE
+from imblearn.under_sampling import TomekLinks
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.metrics import (accuracy_score, classification_report,
+                             confusion_matrix)
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler, PowerTransformer
 
 
 class ChangeDataType(BaseEstimator, TransformerMixin):
@@ -279,24 +261,6 @@ class SMOTETomekSampler:
 
 random_state = 15
 
-# Class to combine SMOTE oversampling and Tomek Links removal for handling
-# imbalanced data
-
-
-class SMOTETomekSampler:
-    def __init__(self, target_column):
-        self.target_column = target_column
-        self.sampler = SMOTETomek(random_state=random_state)
-
-    # Fits the sampler and resamples the data using a combination of SMOTE and
-    # Tomek Links
-    def fit_resample(self, df):
-        X = df.drop(columns=[self.target_column])
-        y = df[self.target_column]
-        X_resampled, y_resampled = self.sampler.fit_resample(X, y)
-        return X_resampled.assign(**{self.target_column: y_resampled})
-
-
 # 1. Logistic Regression
 
 
@@ -313,7 +277,7 @@ def print_score(clf, X_train, y_train, X_test, y_test, train=True):
         print("_______________________________________________")
         print(f"Confusion Matrix: \n {confusion_matrix(y_train, pred)}\n")
 
-    elif train == False:
+    elif not train:
         pred = clf.predict(X_test)
         clf_report = pd.DataFrame(classification_report(y_test, pred, output_dict=True))
         print("Test Result:\n================================================")
