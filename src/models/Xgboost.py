@@ -107,7 +107,7 @@ with mlflow.start_run(run_name="Xgboost_experiment") as run:
 
     mlflow.log_params(grid_search.best_params_)  # Logs best combo
     mlflow.log_metric("best_cv_score", grid_search.best_score_)
-        
+
     # Step 1: get confusion matrix values
     conf_matrix = confusion_matrix(y_test, preds)   
     true_positive = conf_matrix[0][0]
@@ -134,7 +134,7 @@ with mlflow.start_run(run_name="Xgboost_experiment") as run:
         plt.close()
     # Step 4: Log to MLflow
         mlflow.log_artifact(cm_path, artifact_path="plots")
-        
+
     mlflow.log_metric("f1", f1)
     mlflow.log_metric("precision", precision)
     mlflow.log_metric("recall", recall)

@@ -24,17 +24,17 @@ def start_api_server():
         return True
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         print("API server is not running. Starting it now...")
-        
+
         # Get the directory of the current script
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        
+
         # Start the server as a subprocess
         server_process = subprocess.Popen(
             [sys.executable, os.path.join(current_dir, "api.py")],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
-        
+
         # Wait for server to start (up to 10 seconds)
         for _ in range(10):
             try:
@@ -43,7 +43,7 @@ def start_api_server():
                 return True
             except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
                 time.sleep(1)
-                
+
         print("Failed to start API server.")
         return False
 
@@ -83,7 +83,7 @@ def test_single_prediction():
         "city_pop_bin": 0.0,
         "amt_yeo_johnson": 0.043759851582931636
     }
-    
+
     try:
         # Send request
         response = requests.post(
@@ -91,7 +91,7 @@ def test_single_prediction():
             json={"transaction_data": transaction},
             headers={"Content-Type": "application/json"}
         )
-        
+
         print("Single Prediction Response:")
         print(json.dumps(response.json(), indent=2))
         print(f"Status Code: {response.status_code}")
@@ -99,7 +99,7 @@ def test_single_prediction():
         print("ERROR: Could not connect to API server for single prediction test.")
     except Exception as e:
         print(f"ERROR during single prediction test: {str(e)}")
-    
+
     print("-" * 50)
 
 def test_batch_prediction():
@@ -146,7 +146,7 @@ def test_batch_prediction():
             "amt_yeo_johnson": 0.23004177642877963
         }
     ]
-    
+
     try:
         # Send request
         response = requests.post(
@@ -154,7 +154,7 @@ def test_batch_prediction():
             json={"transactions": transactions},
             headers={"Content-Type": "application/json"}
         )
-        
+
         print("Batch Prediction Response:")
         print(json.dumps(response.json(), indent=2))
         print(f"Status Code: {response.status_code}")
@@ -162,24 +162,24 @@ def test_batch_prediction():
         print("ERROR: Could not connect to API server for batch prediction test.")
     except Exception as e:
         print(f"ERROR during batch prediction test: {str(e)}")
-    
+
     print("-" * 50)
 
 if __name__ == "__main__":
     print("Testing Fraud Detection API...")
-    
+
     try:
         # Start the API server if it's not running
         if start_api_server():
             # Give the server a moment to fully initialize
             time.sleep(2)
-            
+
             # Test health endpoint
             test_health()
-            
+
             # Test single prediction
             test_single_prediction()
-            
+
             # Test batch prediction
             test_batch_prediction()
     except Exception as e:

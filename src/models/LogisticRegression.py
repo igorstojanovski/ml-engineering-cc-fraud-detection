@@ -155,7 +155,7 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
         plt.close()
     # Step 4: Log to MLflow
         mlflow.log_artifact(cm_path, artifact_path="plots")
-        
+
     mlflow.log_metric("f1", f1)
     mlflow.log_metric("precision", precision)
     mlflow.log_metric("recall", recall)
@@ -165,7 +165,7 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
     mlflow.sklearn.log_model(best_model, signature=signature, artifact_path="model")
 
     mlflow.end_run()
-    
+
 test_score = accuracy_score(y_test, best_model.predict(X_test)) * 100
 train_score = accuracy_score(y_train_smote, best_model.predict(X_train_smote)) * 100
 

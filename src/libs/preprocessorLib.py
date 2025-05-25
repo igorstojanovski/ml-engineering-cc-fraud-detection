@@ -27,7 +27,7 @@ class FraudDetectionConfig:
         self.name = name
         self.mlflow_tracking_uri = mlflow_tracking_uri
         self.experiment_name = experiment_name
-        
+
         # Constants
         self.target_column = 'is_fraud'
         self.city_pop_bins = [0, 10000, 50000, 100000, 500000, 1000000, np.inf]
@@ -46,10 +46,10 @@ class FraudDetectionConfig:
 def load_and_split_data(config):
     """
     Loads the datasets and splits them into features and target variables.
-    
+
     Args:
         config (FraudDetectionConfig): Configuration object
-        
+
     Returns:
         tuple: (X, y) containing features and target values
     """
@@ -61,10 +61,10 @@ def load_and_split_data(config):
 def create_preprocessing_pipeline(config):
     """
     Creates and returns the preprocessing pipeline with all transformation steps.
-    
+
     Args:
         config (FraudDetectionConfig): Configuration object
-        
+
     Returns:
         sklearn.pipeline.Pipeline: Configured preprocessing pipeline
     """
@@ -95,7 +95,7 @@ def create_preprocessing_pipeline(config):
 def log_to_mlflow(config, preprocessed, fig1, fig2, fig3):
     """
     Logs the preprocessed datasets and related artifacts to MLflow.
-    
+
     Args:
         config (FraudDetectionConfig): Configuration object
         preprocessed (pd.DataFrame): Preprocessed dataset
@@ -103,10 +103,10 @@ def log_to_mlflow(config, preprocessed, fig1, fig2, fig3):
     """
     mlflow.set_tracking_uri(uri=config.mlflow_tracking_uri)
     mlflow.set_experiment(config.experiment_name)
-    
+
     with mlflow.start_run(run_name=config.context) as run:
         mlflow.log_artifact(config.output_filename)
-        
+
         dataset = mlflow.data.from_pandas(
             preprocessed,
             source=config.ds_url,
@@ -146,12 +146,12 @@ def pie_chart_fraudulent_transactions(df, style="classic", plot_size=(6, 6)):
 def correlation_matrix(data, style="classic", plot_size=(50, 8)):
     """
     Creates a correlation matrix heatmap for numerical columns.
-    
+
     Args:
         data (pd.DataFrame): Input dataframe
         style (str): Matplotlib style to use
         plot_size (tuple): Figure size (width, height)
-        
+
     Returns:
         matplotlib.figure.Figure: The generated plot figure
     """
@@ -162,15 +162,15 @@ def correlation_matrix(data, style="classic", plot_size=(50, 8)):
     with plt.style.context(style):
         fig = plt.figure(figsize=plot_size)
         ax = fig.add_subplot(111)  # Create axes for the figure
-        
+
         # Plot correlation matrix
         sns.heatmap(df_numerical.corr(), annot=True, cmap='coolwarm', ax=ax)
-        
+
         # Add titles and labels
         ax.set_title("Correlation Matrix for Numerical Columns")
-        
+
         plt.tight_layout()
-    
+
     plt.close(fig)
     return fig
 
@@ -191,48 +191,48 @@ def percentage(data, style='classic', plot_size=(10, 6)):
     color_dict = dict(zip(unique_categories, palette))    
     with plt.style.context(style):
         fig, ax = plt.subplots(figsize=plot_size)
-        
+
         sns.barplot(y='category', 
                    x='diff', 
                    data=ab.sort_values('diff', ascending=False), 
                    hue='category', 
                    legend=False,
                    ax=ax)
-        
+
         ax.set_xlabel('Percentage Difference')
         ax.set_ylabel('Transaction Category')
         ax.set_title('Percentage Difference of Fraudulent over Non-Fraudulent Transactions by Category')
-        
+
         plt.tight_layout()
-        
+
         return fig
 
 def main(config):
     """
     Main execution function that orchestrates the preprocessing workflow.
-    
+
     Args:
         config (FraudDetectionConfig): Configuration object
     """
     # Load and split data
     X_raw, y, dataframe = load_and_split_data(config)
-    
+
     # Create and apply preprocessing pipeline
     preprocessor = create_preprocessing_pipeline(config)
     preprocessor.fit(X_raw)
     preprocessed = preprocessor.transform(X_raw)
-    
+
     # Add target column back to preprocessed data
     preprocessed[config.target_column] = y.values
-    
+
     # Save preprocessed datasets
     preprocessed.to_csv(config.output_filename, index=False)
-    
+
     # Create visualizations
     fig1 = pie_chart_fraudulent_transactions(preprocessed)
     fig2 = correlation_matrix(preprocessed)
     fig3 = percentage(dataframe)
-    
+
     # Log to MLflow
     log_to_mlflow(config, preprocessed, fig1, fig2, fig3)
 

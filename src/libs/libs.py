@@ -56,10 +56,10 @@ class DateTimeFeatures(BaseEstimator, TransformerMixin):
         X['transaction_hour'] = X[self.date_column].dt.hour
         X['transaction_month'] = X[self.date_column].dt.month
         X['is_weekend'] = X[self.date_column].dt.weekday.isin([5, 6]).round().astype('int64')
-        
+
         # Day of week: Monday=0, Sunday=6
         X['day_of_week'] = X[self.date_column].dt.day_name()
-        
+
         # Part of day classification
         X['part_of_day'] = pd.cut(X['transaction_hour'], 
                                   bins=self.transaction_hour_bins, 
@@ -82,7 +82,7 @@ class AgeFeature(BaseEstimator, TransformerMixin):
         reference_date = pd.Timestamp(2020, 12, 31)
         X[self.new_column] = (reference_date - X[self.dob_column]).dt.days // 365
         return X
-    
+
 class CalculateDistance(BaseEstimator, TransformerMixin):
     # Calculates the distance between two geographical points using the Haversine formula.
     def __init__(self, lat_col, long_col, merch_lat_col, merch_long_col):
@@ -97,13 +97,13 @@ class CalculateDistance(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         X = X.copy()
-        
+
         # Convert latitudes and longitudes to radians
         lat1 = np.radians(X[self.lat_col])
         lon1 = np.radians(X[self.long_col])
         lat2 = np.radians(X[self.merch_lat_col])
         lon2 = np.radians(X[self.merch_long_col])
-        
+
         # Haversine formula to calculate distance
         dlat = lat2 - lat1
         dlon = lon2 - lon1
@@ -157,7 +157,7 @@ class DropColumns(BaseEstimator, TransformerMixin):
         X = X.drop(columns=self.columns, errors='ignore')
         self.remaining_columns = X.columns
         return X
-        
+
 
 class LabelEncoding(BaseEstimator, TransformerMixin):
     # Performs label encoding for specified categorical columns.
@@ -191,7 +191,7 @@ class ScaleFeatures(BaseEstimator, TransformerMixin):
         X = X.copy()
         X[:] = self.scaler.transform(X)
         return X
-    
+
     # Preprocessing pipeline
 
 # Class to oversample the minority class using the Synthetic Minority Over-sampling Technique (SMOTE)
@@ -276,7 +276,7 @@ def print_score(clf, X_train, y_train, X_test, y_test, train=True):
         print(f"CLASSIFICATION REPORT:\n{clf_report}")
         print("_______________________________________________")
         print(f"Confusion Matrix: \n {confusion_matrix(y_train, pred)}\n")
-        
+
     elif train==False:
         pred = clf.predict(X_test)
         clf_report = pd.DataFrame(classification_report(y_test, pred, output_dict=True))

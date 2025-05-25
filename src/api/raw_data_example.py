@@ -33,7 +33,7 @@ def test_single_raw_prediction():
         "merch_lat": 33.986391,
         "merch_long": -81.200714
     }
-    
+
     try:
         # Send request
         response = requests.post(
@@ -41,7 +41,7 @@ def test_single_raw_prediction():
             json={"transaction_data": transaction},
             headers={"Content-Type": "application/json"}
         )
-        
+
         print("Single Raw Prediction Response:")
         print(json.dumps(response.json(), indent=2))
         print(f"Status Code: {response.status_code}")
@@ -49,7 +49,7 @@ def test_single_raw_prediction():
         print("ERROR: Could not connect to API server for single prediction test.")
     except Exception as e:
         print(f"ERROR during single prediction test: {str(e)}")
-    
+
     print("-" * 50)
 
 def test_batch_raw_prediction():
@@ -103,7 +103,7 @@ def test_batch_raw_prediction():
             "merch_long": -109.960431
         }
     ]
-    
+
     try:
         # Send request
         response = requests.post(
@@ -111,7 +111,7 @@ def test_batch_raw_prediction():
             json={"transactions": transactions},
             headers={"Content-Type": "application/json"}
         )
-        
+
         print("Batch Raw Prediction Response:")
         print(json.dumps(response.json(), indent=2))
         print(f"Status Code: {response.status_code}")
@@ -119,14 +119,14 @@ def test_batch_raw_prediction():
         print("ERROR: Could not connect to API server for batch prediction test.")
     except Exception as e:
         print(f"ERROR during batch prediction test: {str(e)}")
-    
+
     print("-" * 50)
 
 if __name__ == "__main__":
     print("Testing Fraud Detection API with raw data...")
-    
+
     # Test single prediction
     test_single_raw_prediction()
-    
+
     # Test batch prediction
     test_batch_raw_prediction()
