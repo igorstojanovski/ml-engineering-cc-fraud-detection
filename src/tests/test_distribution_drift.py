@@ -103,8 +103,7 @@ class TestDistributionDrift(unittest.TestCase):
             )
             for feature, ks_stat, p_value, alpha in failed_features:
                 failure_message += f"  - {feature}: KS-statistic={ks_stat:.6f}, "
-                f"p-value={p_value:.6f}, "
-                f"alpha={alpha:.3f}\n"
+                f"p-value={p_value:.6f}, ""alpha={alpha:.3f}\n"
 
             if skipped_features:
                 failure_message += "\nSkipped features due to errors:\n"
@@ -121,10 +120,9 @@ class TestDistributionDrift(unittest.TestCase):
 
         for column_name in self.columns:
             # Create a test method name based on the column name
-            test_name = f"test_feature_{
-                column_name.replace(
-                    ' ', '_').replace(
-                    '-', '_')}"
+            test_name = (
+                f"test_feature_{column_name.replace(' ', '_').replace('-', '_')}"
+            )
 
             # Define the test method with appropriate alpha based on column name
             def test_method(self, column=column_name):

@@ -147,12 +147,11 @@ class TestNoiseSensitivity(unittest.TestCase):
             f"{'Recall':<20}"
         )
         print(
-            f"{
-                'Level':<8} {
-                'Score (% Base)':<20} {
-                'Score (% Base)':<20} {
-                    'Score (% Base)':<20} {
-                        'Score (% Base)':<20}"
+            f"{'Level':<8} "
+            f"{'Score (% Base)':<20} "
+            f"{'Score (% Base)':<20} "
+            f"{'Score (% Base)':<20} "
+            f"{'Score (% Base)':<20}"
         )
         print("-" * 80)
 

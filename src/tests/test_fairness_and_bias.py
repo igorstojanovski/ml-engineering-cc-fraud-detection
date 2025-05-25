@@ -123,8 +123,8 @@ class TestFairnessAndBias(unittest.TestCase):
             self.assertLessEqual(
                 recall_disparity,
                 self.max_disparity_threshold,
-                f"Recall disparity for {sensitive_column} exceeds threshold: {
-                    recall_disparity:.4f}",
+                f"Recall disparity for {sensitive_column} "
+                f"exceeds threshold: {recall_disparity:.4f}",
             )
 
             self.assertLessEqual(

@@ -155,10 +155,9 @@ class TestOutlierDetection(unittest.TestCase):
                 continue
 
             # Create a test method name based on the feature name
-            test_name = f"test_outliers_in_{
-                feature.replace(
-                    ' ', '_').replace(
-                    '-', '_')}"
+            test_name = (
+                f"test_outliers_in_{feature.replace(' ', '_').replace('-', '_')}"
+            )
 
             # Define the test method
             def test_method(self, feature=feature):
