@@ -90,7 +90,9 @@ class TestNoiseSensitivity(unittest.TestCase):
 
         print("\nNoise Sensitivity Test - F1 Score:")
         print("-" * 60)
-        print(f"{'Noise Level':<15} {'F1 Score':<15} {'% of Baseline':<15} {'Result':<10}")
+        print(
+            f"{'Noise Level':<15} {'F1 Score':<15} {'% of Baseline':<15} {'Result':<10}"
+        )
         print("-" * 60)
 
         # Test each noise level
@@ -108,7 +110,9 @@ class TestNoiseSensitivity(unittest.TestCase):
             percentage = (f1 / self.baseline_f1) * 100
 
             # Determine result
-            result = "PASS" if percentage >= min_acceptable_performance * 100 else "FAIL"
+            result = (
+                "PASS" if percentage >= min_acceptable_performance * 100 else "FAIL"
+            )
 
             print(f"{noise_level:<15.2f} {f1:<15.4f} {percentage:<15.2f}% {result:<10}")
 
@@ -117,7 +121,7 @@ class TestNoiseSensitivity(unittest.TestCase):
                 percentage,
                 min_acceptable_performance * 100,
                 f"Model performance with noise level {noise_level} dropped below "
-                f"{min_acceptable_performance * 100}% of baseline"
+                f"{min_acceptable_performance * 100}% of baseline",
             )
 
         print("-" * 60)
@@ -138,14 +142,16 @@ class TestNoiseSensitivity(unittest.TestCase):
                 'F1 Score':<20} {
                 'Accuracy':<20} {
                     'Precision':<20} {
-                        'Recall':<20}")
+                        'Recall':<20}"
+        )
         print(
             f"{
                 'Level':<8} {
                 'Score (% Base)':<20} {
                 'Score (% Base)':<20} {
                     'Score (% Base)':<20} {
-                        'Score (% Base)':<20}")
+                        'Score (% Base)':<20}"
+        )
         print("-" * 80)
 
         # Store results for reporting
@@ -172,15 +178,17 @@ class TestNoiseSensitivity(unittest.TestCase):
             rec_pct = (recall / self.baseline_recall) * 100
 
             # Print results
-            print(f"{noise_level:<8.2f} {f1:.4f} ({f1_pct:.1f}%) {accuracy:.4f} ({acc_pct:.1f}%) "
-                  f"{precision:.4f} ({prec_pct:.1f}%) {recall:.4f} ({rec_pct:.1f}%)")
+            print(
+                f"{noise_level:<8.2f} {f1:.4f} ({f1_pct:.1f}%) {accuracy:.4f} ({acc_pct:.1f}%) "
+                f"{precision:.4f} ({prec_pct:.1f}%) {recall:.4f} ({rec_pct:.1f}%)"
+            )
 
             # Check if any metric falls below acceptable level
             metrics = [
                 ("F1", f1_pct),
                 ("Accuracy", acc_pct),
                 ("Precision", prec_pct),
-                ("Recall", rec_pct)
+                ("Recall", rec_pct),
             ]
 
             for metric_name, percentage in metrics:
@@ -231,7 +239,9 @@ class TestNoiseSensitivity(unittest.TestCase):
                 percentage = (f1 / self.baseline_f1) * 100
 
                 # Determine result
-                result = "PASS" if percentage >= min_acceptable_performance * 100 else "FAIL"
+                result = (
+                    "PASS" if percentage >= min_acceptable_performance * 100 else "FAIL"
+                )
 
                 print(f"{feature:<30} {f1:<15.4f} {percentage:<15.2f}% {result:<10}")
 

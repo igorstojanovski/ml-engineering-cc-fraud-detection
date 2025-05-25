@@ -7,7 +7,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, precision_score, recall_score
 from src.constants import MODEL_URI, TARGET_COLUMN
 from src.libs.libs import SMOTESampler
-from fairlearn.metrics import MetricFrame, selection_rate, true_positive_rate, false_positive_rate
+from fairlearn.metrics import (
+    MetricFrame,
+    selection_rate,
+    true_positive_rate,
+    false_positive_rate,
+)
 
 
 class TestFairnessAndBias(unittest.TestCase):
@@ -43,7 +48,7 @@ class TestFairnessAndBias(unittest.TestCase):
         cls.y_pred = cls.model.predict(cls.X_test)
 
         # Define sensitive features to test
-        cls.sensitive_features = ['gender']
+        cls.sensitive_features = ["gender"]
 
         # Define acceptable thresholds for fairness
         cls.max_disparity_threshold = 0.2  # Maximum allowed disparity (20%)
@@ -55,7 +60,8 @@ class TestFairnessAndBias(unittest.TestCase):
             # Skip if sensitive column doesn't exist
             if sensitive_column not in self.X_test.columns:
                 print(
-                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping.")
+                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping."
+                )
                 continue
 
             sensitive_values = self.X_test[sensitive_column]
@@ -70,16 +76,19 @@ class TestFairnessAndBias(unittest.TestCase):
                 # Skip groups with too few samples
                 if sum(group_mask) < 10:
                     print(
-                        f"Warning: Group '{group}' in '{sensitive_column}' has fewer than 10 samples. Skipping.")
+                        f"Warning: Group '{group}' in '{sensitive_column}' has fewer than 10 samples. Skipping."
+                    )
                     continue
 
-                results.append({
-                    'Group': group,
-                    'Count': group_mask.sum(),
-                    'Precision': precision_score(group_y_true, group_y_pred),
-                    'Recall': recall_score(group_y_true, group_y_pred),
-                    'F1': f1_score(group_y_true, group_y_pred)
-                })
+                results.append(
+                    {
+                        "Group": group,
+                        "Count": group_mask.sum(),
+                        "Precision": precision_score(group_y_true, group_y_pred),
+                        "Recall": recall_score(group_y_true, group_y_pred),
+                        "F1": f1_score(group_y_true, group_y_pred),
+                    }
+                )
 
             # Convert to DataFrame for easier analysis
             df_results = pd.DataFrame(results)
@@ -87,16 +96,16 @@ class TestFairnessAndBias(unittest.TestCase):
             print(df_results)
 
             # Calculate disparities
-            max_precision = df_results['Precision'].max()
-            min_precision = df_results['Precision'].min()
+            max_precision = df_results["Precision"].max()
+            min_precision = df_results["Precision"].min()
             precision_disparity = max_precision - min_precision
 
-            max_recall = df_results['Recall'].max()
-            min_recall = df_results['Recall'].min()
+            max_recall = df_results["Recall"].max()
+            min_recall = df_results["Recall"].min()
             recall_disparity = max_recall - min_recall
 
-            max_f1 = df_results['F1'].max()
-            min_f1 = df_results['F1'].min()
+            max_f1 = df_results["F1"].max()
+            min_f1 = df_results["F1"].min()
             f1_disparity = max_f1 - min_f1
 
             print(f"\nDisparities for {sensitive_column}:")
@@ -109,21 +118,21 @@ class TestFairnessAndBias(unittest.TestCase):
                 precision_disparity,
                 self.max_disparity_threshold,
                 f"Precision disparity for {sensitive_column} exceeds threshold: {
-                    precision_disparity:.4f}"
+                    precision_disparity:.4f}",
             )
 
             self.assertLessEqual(
                 recall_disparity,
                 self.max_disparity_threshold,
                 f"Recall disparity for {sensitive_column} exceeds threshold: {
-                    recall_disparity:.4f}"
+                    recall_disparity:.4f}",
             )
 
             self.assertLessEqual(
                 f1_disparity,
                 self.max_disparity_threshold,
                 f"F1 disparity for {sensitive_column} exceeds threshold: {
-                    f1_disparity:.4f}"
+                    f1_disparity:.4f}",
             )
 
             # Assert minimum performance for all groups
@@ -131,21 +140,21 @@ class TestFairnessAndBias(unittest.TestCase):
                 min_precision,
                 self.min_performance_threshold,
                 f"Minimum precision across {sensitive_column} groups below threshold: {
-                    min_precision:.4f}"
+                    min_precision:.4f}",
             )
 
             self.assertGreaterEqual(
                 min_recall,
                 self.min_performance_threshold,
                 f"Minimum recall across {sensitive_column} groups below threshold: {
-                    min_recall:.4f}"
+                    min_recall:.4f}",
             )
 
             self.assertGreaterEqual(
                 min_f1,
                 self.min_performance_threshold,
                 f"Minimum F1 across {sensitive_column} groups below threshold: {
-                    min_f1:.4f}"
+                    min_f1:.4f}",
             )
 
     def test_fairlearn_metrics(self):
@@ -154,7 +163,8 @@ class TestFairnessAndBias(unittest.TestCase):
             # Skip if sensitive column doesn't exist
             if sensitive_column not in self.X_test.columns:
                 print(
-                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping.")
+                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping."
+                )
                 continue
 
             sensitive_values = self.X_test[sensitive_column]
@@ -164,11 +174,11 @@ class TestFairnessAndBias(unittest.TestCase):
                 metrics={
                     "selection_rate": selection_rate,
                     "true_positive_rate": true_positive_rate,
-                    "false_positive_rate": false_positive_rate
+                    "false_positive_rate": false_positive_rate,
                 },
                 y_true=self.y_test,
                 y_pred=self.y_pred,
-                sensitive_features=sensitive_values
+                sensitive_features=sensitive_values,
             )
 
             # Print metrics by group
@@ -176,12 +186,15 @@ class TestFairnessAndBias(unittest.TestCase):
             print(metric_frame.by_group)
 
             # Calculate disparities
-            selection_rate_disparity = metric_frame.difference(
-                method="between_groups")["selection_rate"]
+            selection_rate_disparity = metric_frame.difference(method="between_groups")[
+                "selection_rate"
+            ]
             tpr_disparity = metric_frame.difference(method="between_groups")[
-                "true_positive_rate"]
+                "true_positive_rate"
+            ]
             fpr_disparity = metric_frame.difference(method="between_groups")[
-                "false_positive_rate"]
+                "false_positive_rate"
+            ]
 
             print(f"\nFairlearn disparities for {sensitive_column}:")
             print(f"Selection rate disparity: {selection_rate_disparity:.4f}")
@@ -193,21 +206,21 @@ class TestFairnessAndBias(unittest.TestCase):
                 selection_rate_disparity,
                 self.max_disparity_threshold,
                 f"Selection rate disparity for {sensitive_column} exceeds threshold: {
-                    selection_rate_disparity:.4f}"
+                    selection_rate_disparity:.4f}",
             )
 
             self.assertLessEqual(
                 tpr_disparity,
                 self.max_disparity_threshold,
                 f"True positive rate disparity for {sensitive_column} exceeds threshold: {
-                    tpr_disparity:.4f}"
+                    tpr_disparity:.4f}",
             )
 
             self.assertLessEqual(
                 fpr_disparity,
                 self.max_disparity_threshold,
                 f"False positive rate disparity for {sensitive_column} exceeds threshold: {
-                    fpr_disparity:.4f}"
+                    fpr_disparity:.4f}",
             )
 
     def test_demographic_parity(self):
@@ -216,7 +229,8 @@ class TestFairnessAndBias(unittest.TestCase):
             # Skip if sensitive column doesn't exist
             if sensitive_column not in self.X_test.columns:
                 print(
-                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping.")
+                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping."
+                )
                 continue
 
             sensitive_values = self.X_test[sensitive_column]
@@ -245,7 +259,7 @@ class TestFairnessAndBias(unittest.TestCase):
                 selection_rate_disparity,
                 self.max_disparity_threshold,
                 f"Selection rate disparity for {sensitive_column} exceeds threshold: {
-                    selection_rate_disparity:.4f}"
+                    selection_rate_disparity:.4f}",
             )
 
     def test_equalized_odds(self):
@@ -254,7 +268,8 @@ class TestFairnessAndBias(unittest.TestCase):
             # Skip if sensitive column doesn't exist
             if sensitive_column not in self.X_test.columns:
                 print(
-                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping.")
+                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping."
+                )
                 continue
 
             sensitive_values = self.X_test[sensitive_column]
@@ -297,14 +312,14 @@ class TestFairnessAndBias(unittest.TestCase):
                 tpr_disparity,
                 self.max_disparity_threshold,
                 f"True positive rate disparity for {sensitive_column} exceeds threshold: {
-                    tpr_disparity:.4f}"
+                    tpr_disparity:.4f}",
             )
 
             self.assertLessEqual(
                 fpr_disparity,
                 self.max_disparity_threshold,
                 f"False positive rate disparity for {sensitive_column} exceeds threshold: {
-                    fpr_disparity:.4f}"
+                    fpr_disparity:.4f}",
             )
 
 

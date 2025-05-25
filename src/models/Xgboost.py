@@ -24,7 +24,8 @@ from sklearn.metrics import (
 from src.libs.libs import *
 
 import warnings
-warnings.filterwarnings('ignore')
+
+warnings.filterwarnings("ignore")
 
 
 mlflow.set_tracking_uri(uri=src.constants.ML_FLOW_URI)
@@ -52,10 +53,11 @@ with mlflow.start_run(run_name="Xgboost_experiment") as run:
     y_train_smote = smote_resampled_df[TARGET_COLUMN]
     # random_state=42 to ensure reproducibility
     X_train, X_test, y_train, y_test = train_test_split(
-        X_train_smote, y_train_smote, test_size=0.3, random_state=42)
+        X_train_smote, y_train_smote, test_size=0.3, random_state=42
+    )
 
     # Train model
-    xgb_model = XGBClassifier(n_jobs=-1, tree_method='hist', early_stopping_rounds=10)
+    xgb_model = XGBClassifier(n_jobs=-1, tree_method="hist", early_stopping_rounds=10)
 
     # on my machine it takes too much time to go trough all of them
     # param_grid =  {
@@ -84,9 +86,9 @@ with mlflow.start_run(run_name="Xgboost_experiment") as run:
         estimator=xgb_model,
         param_grid=param_grid,
         cv=3,  # 5-fold cross-validation
-        scoring='f1',  # or 'f1', 'roc_auc', etc.
+        scoring="f1",  # or 'f1', 'roc_auc', etc.
         n_jobs=-1,  # Use all processors
-        verbose=0
+        verbose=0,
     )
 
     # Fit to your training data
@@ -132,7 +134,7 @@ with mlflow.start_run(run_name="Xgboost_experiment") as run:
         cm_path = os.path.join(tmp_dir, "confusion_matrix.png")
         plt.savefig(cm_path)
         plt.close()
-    # Step 4: Log to MLflow
+        # Step 4: Log to MLflow
         mlflow.log_artifact(cm_path, artifact_path="plots")
 
     mlflow.log_metric("f1", f1)

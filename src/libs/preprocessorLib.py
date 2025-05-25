@@ -21,7 +21,7 @@ class FraudDetectionConfig:
         context,
         name,
         mlflow_tracking_uri=constants.ML_FLOW_URI,
-        experiment_name=constants.EXPERIMENT_NAME
+        experiment_name=constants.EXPERIMENT_NAME,
     ):
         self.ds_url = ds_url
         self.output_filename = output_filename
@@ -31,20 +31,52 @@ class FraudDetectionConfig:
         self.experiment_name = experiment_name
 
         # Constants
-        self.target_column = 'is_fraud'
+        self.target_column = "is_fraud"
         self.city_pop_bins = [0, 10000, 50000, 100000, 500000, 1000000, np.inf]
-        self.city_pop_labels = ['<10K', '10K-50K',
-                                '50K-100K', '100K-500K', '500K-1M', '>1M']
+        self.city_pop_labels = [
+            "<10K",
+            "10K-50K",
+            "50K-100K",
+            "100K-500K",
+            "500K-1M",
+            ">1M",
+        ]
         self.transaction_hour_bins = [-1, 5, 11, 17, 21, 24]
-        self.transaction_hour_labels = ['Late Night',
-                                        'Morning', 'Afternoon', 'Evening', 'Night']
+        self.transaction_hour_labels = [
+            "Late Night",
+            "Morning",
+            "Afternoon",
+            "Evening",
+            "Night",
+        ]
         self.drop_columns = [
-            'Unnamed: 0', 'trans_date_trans_time', 'cc_num', 'merchant', 'amt',
-            'first', 'last', 'street', 'city', 'state', 'zip', 'lat', 'long',
-            'city_pop', 'job', 'dob', 'trans_num', 'unix_time', 'merch_lat', 'merch_long'
+            "Unnamed: 0",
+            "trans_date_trans_time",
+            "cc_num",
+            "merchant",
+            "amt",
+            "first",
+            "last",
+            "street",
+            "city",
+            "state",
+            "zip",
+            "lat",
+            "long",
+            "city_pop",
+            "job",
+            "dob",
+            "trans_num",
+            "unix_time",
+            "merch_lat",
+            "merch_long",
         ]
         self.categorical_features = [
-            'category', 'gender', 'day_of_week', 'part_of_day', 'city_pop_bin'
+            "category",
+            "gender",
+            "day_of_week",
+            "part_of_day",
+            "city_pop_bin",
         ]
 
 
@@ -74,29 +106,40 @@ def create_preprocessing_pipeline(config):
     Returns:
         sklearn.pipeline.Pipeline: Configured preprocessing pipeline
     """
-    return Pipeline([
-        ('change_dtype', ChangeDataType(columns=['trans_date_trans_time', 'dob'])),
-        ('datetime_features', DateTimeFeatures(
-            date_column='trans_date_trans_time',
-            transaction_hour_bins=config.transaction_hour_bins,
-            transaction_hour_labels=config.transaction_hour_labels
-        )),
-        ('age_feature', AgeFeature(dob_column='dob')),
-        ('calculate_distance', CalculateDistance(
-            lat_col='lat',
-            long_col='long',
-            merch_lat_col='merch_lat',
-            merch_long_col='merch_long'
-        )),
-        ('bin_city_pop', BinCityPopulation(
-            city_pop_bins=config.city_pop_bins,
-            city_pop_labels=config.city_pop_labels
-        )),
-        ('yeo_johnson', YeoJohnsonTransformer()),
-        ('drop_columns', DropColumns(columns=config.drop_columns)),
-        ('label_encoding', LabelEncoding(columns=config.categorical_features)),
-        ('scale_features', ScaleFeatures()),
-    ])
+    return Pipeline(
+        [
+            ("change_dtype", ChangeDataType(columns=["trans_date_trans_time", "dob"])),
+            (
+                "datetime_features",
+                DateTimeFeatures(
+                    date_column="trans_date_trans_time",
+                    transaction_hour_bins=config.transaction_hour_bins,
+                    transaction_hour_labels=config.transaction_hour_labels,
+                ),
+            ),
+            ("age_feature", AgeFeature(dob_column="dob")),
+            (
+                "calculate_distance",
+                CalculateDistance(
+                    lat_col="lat",
+                    long_col="long",
+                    merch_lat_col="merch_lat",
+                    merch_long_col="merch_long",
+                ),
+            ),
+            (
+                "bin_city_pop",
+                BinCityPopulation(
+                    city_pop_bins=config.city_pop_bins,
+                    city_pop_labels=config.city_pop_labels,
+                ),
+            ),
+            ("yeo_johnson", YeoJohnsonTransformer()),
+            ("drop_columns", DropColumns(columns=config.drop_columns)),
+            ("label_encoding", LabelEncoding(columns=config.categorical_features)),
+            ("scale_features", ScaleFeatures()),
+        ]
+    )
 
 
 def log_to_mlflow(config, preprocessed, fig1, fig2, fig3):
@@ -118,7 +161,7 @@ def log_to_mlflow(config, preprocessed, fig1, fig2, fig3):
             preprocessed,
             source=config.ds_url,
             name=config.name,
-            targets=config.target_column
+            targets=config.target_column,
         )
         mlflow.log_input(dataset, context=config.context)
         mlflow.log_figure(fig1, "fraud_transaction_count.png")
@@ -143,7 +186,7 @@ def pie_chart_fraudulent_transactions(df, style="classic", plot_size=(6, 6)):
             startangle=90,
             colors=colors,
             explode=explode,
-            shadow=True
+            shadow=True,
         )
         ax.set_title("Fraudulent vs Non-Fraudulent Transactions", fontsize=14)
         plt.tight_layout()
@@ -173,7 +216,7 @@ def correlation_matrix(data, style="classic", plot_size=(50, 8)):
         ax = fig.add_subplot(111)  # Create axes for the figure
 
         # Plot correlation matrix
-        sns.heatmap(df_numerical.corr(), annot=True, cmap='coolwarm', ax=ax)
+        sns.heatmap(df_numerical.corr(), annot=True, cmap="coolwarm", ax=ax)
 
         # Add titles and labels
         ax.set_title("Correlation Matrix for Numerical Columns")
@@ -184,37 +227,48 @@ def correlation_matrix(data, style="classic", plot_size=(50, 8)):
     return fig
 
 
-def percentage(data, style='classic', plot_size=(10, 6)):
+def percentage(data, style="classic", plot_size=(10, 6)):
     # Calculate the percentage of each category
-    a = data[data['is_fraud'] == 0]['category'].value_counts(
-        normalize=True).to_frame().reset_index()
-    a.columns = ['category', 'not fraud percentage']
+    a = (
+        data[data["is_fraud"] == 0]["category"]
+        .value_counts(normalize=True)
+        .to_frame()
+        .reset_index()
+    )
+    a.columns = ["category", "not fraud percentage"]
 
-    b = data[data['is_fraud'] == 1]['category'].value_counts(
-        normalize=True).to_frame().reset_index()
-    b.columns = ['category', 'fraud percentage']
+    b = (
+        data[data["is_fraud"] == 1]["category"]
+        .value_counts(normalize=True)
+        .to_frame()
+        .reset_index()
+    )
+    b.columns = ["category", "fraud percentage"]
 
-    ab = a.merge(b, on='category')
-    ab['diff'] = ab['fraud percentage'] - ab['not fraud percentage']
+    ab = a.merge(b, on="category")
+    ab["diff"] = ab["fraud percentage"] - ab["not fraud percentage"]
 
-    unique_categories = ab['category'].unique()
+    unique_categories = ab["category"].unique()
     palette = sns.color_palette("husl", len(unique_categories))
 
     color_dict = dict(zip(unique_categories, palette))
     with plt.style.context(style):
         fig, ax = plt.subplots(figsize=plot_size)
 
-        sns.barplot(y='category',
-                    x='diff',
-                    data=ab.sort_values('diff', ascending=False),
-                    hue='category',
-                    legend=False,
-                    ax=ax)
+        sns.barplot(
+            y="category",
+            x="diff",
+            data=ab.sort_values("diff", ascending=False),
+            hue="category",
+            legend=False,
+            ax=ax,
+        )
 
-        ax.set_xlabel('Percentage Difference')
-        ax.set_ylabel('Transaction Category')
+        ax.set_xlabel("Percentage Difference")
+        ax.set_ylabel("Transaction Category")
         ax.set_title(
-            'Percentage Difference of Fraudulent over Non-Fraudulent Transactions by Category')
+            "Percentage Difference of Fraudulent over Non-Fraudulent Transactions by Category"
+        )
 
         plt.tight_layout()
 
@@ -257,6 +311,6 @@ if __name__ == "__main__":
         ds_url=constants.VALIDATION_DATASET_URL,
         output_filename="validation_preprocessed.csv",
         context="validation",
-        name="Fraud Detection in Credit Card Transactions - Validation Data Set / Preprocessed"
+        name="Fraud Detection in Credit Card Transactions - Validation Data Set / Preprocessed",
     )
     main(config)

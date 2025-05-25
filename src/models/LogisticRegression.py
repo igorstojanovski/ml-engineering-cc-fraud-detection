@@ -35,11 +35,17 @@ from mlflow.models.signature import infer_signature
 import joblib
 
 # 🧩 Project-specific
-from src.constants import TRAIN_DATASET_FILE_NAME, TARGET_COLUMN, DATA_URI, ML_FLOW_URI, EXPERIMENT_NAME
+from src.constants import (
+    TRAIN_DATASET_FILE_NAME,
+    TARGET_COLUMN,
+    DATA_URI,
+    ML_FLOW_URI,
+    EXPERIMENT_NAME,
+)
 from src.libs.libs import *
 
 # 🔇 Suppress warnings
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 
 # Choose a safe temp folder regardless of OS
@@ -86,7 +92,8 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
 
     # random_state=42 to ensure reproducibility
     X_train, X_test, y_train, y_test = train_test_split(
-        X_train_smote, y_train_smote, test_size=0.3, random_state=42)
+        X_train_smote, y_train_smote, test_size=0.3, random_state=42
+    )
     # 1. Logistic Regression
     # Train model
     params_grid = {
@@ -96,14 +103,14 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
         "max_iter": [100, 200, 500],
     }
 
-    lr_model = LogisticRegression(solver='liblinear')
+    lr_model = LogisticRegression(solver="liblinear")
     safe_jobs = max(1, cpu_count() - 2)
     grid_search = GridSearchCV(
         estimator=lr_model,
         param_grid=params_grid,
         cv=3,
         n_jobs=safe_jobs,
-        scoring='f1',  # Use F1 score for classification optimization
+        scoring="f1",  # Use F1 score for classification optimization
     )
     grid_search.fit(X_train, y_train)
     best_model = grid_search.best_estimator_
@@ -133,14 +140,18 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
     false_negative = conf_matrix[1][0]
 
     train_precision_pos_class = precision_score(
-        y_train, train_prediction, pos_label=1, zero_division=0)
+        y_train, train_prediction, pos_label=1, zero_division=0
+    )
     test_precision_pos_class = precision_score(
-        y_test, test_prediction, pos_label=1, zero_division=0)
+        y_test, test_prediction, pos_label=1, zero_division=0
+    )
 
     train_recall_pos_class = recall_score(
-        y_train, train_prediction, pos_label=1, zero_division=0)
+        y_train, train_prediction, pos_label=1, zero_division=0
+    )
     test_recall_pos_class = recall_score(
-        y_test, test_prediction, pos_label=1, zero_division=0)
+        y_test, test_prediction, pos_label=1, zero_division=0
+    )
 
     mlflow.log_metric("true_positive", true_positive)
     mlflow.log_metric("true_negative", true_negative)
@@ -161,7 +172,7 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
         cm_path = os.path.join(tmp_dir, "confusion_matrix.png")
         plt.savefig(cm_path)
         plt.close()
-    # Step 4: Log to MLflow
+        # Step 4: Log to MLflow
         mlflow.log_artifact(cm_path, artifact_path="plots")
 
     mlflow.log_metric("f1", f1)
@@ -198,7 +209,7 @@ metrics = {
     "recall_train_fraud": float(train_recall_pos_class),
     "recall_test_fraud": float(test_recall_pos_class),
     "train_score": float(train_score),
-    "test_score": float(test_score)
+    "test_score": float(test_score),
 }
 
 with open("outputs/metrics/logistic_metrics.json", "w") as f:

@@ -42,10 +42,9 @@ class TestFeatureImportance(unittest.TestCase):
         cls.importances = cls.model.feature_importances_
 
         # Create DataFrame
-        cls.feature_importance_df = pd.DataFrame({
-            'Feature': cls.X_train.columns,
-            'Importance': cls.importances
-        }).sort_values(by='Importance', ascending=False)
+        cls.feature_importance_df = pd.DataFrame(
+            {"Feature": cls.X_train.columns, "Importance": cls.importances}
+        ).sort_values(by="Importance", ascending=False)
 
         # Create output directory for plots if it doesn't exist
         os.makedirs("output", exist_ok=True)
@@ -53,12 +52,20 @@ class TestFeatureImportance(unittest.TestCase):
     def test_feature_importance_exists(self):
         """Test that feature importances exist and are valid."""
         self.assertIsNotNone(self.importances, "Feature importances should not be None")
-        self.assertEqual(len(self.importances), len(self.X_train.columns),
-                         "Number of feature importances should match number of features")
-        self.assertGreater(sum(self.importances), 0,
-                           "Sum of feature importances should be positive")
-        self.assertAlmostEqual(sum(self.importances), 1.0, places=5,
-                               msg="Sum of feature importances should be approximately 1.0")
+        self.assertEqual(
+            len(self.importances),
+            len(self.X_train.columns),
+            "Number of feature importances should match number of features",
+        )
+        self.assertGreater(
+            sum(self.importances), 0, "Sum of feature importances should be positive"
+        )
+        self.assertAlmostEqual(
+            sum(self.importances),
+            1.0,
+            places=5,
+            msg="Sum of feature importances should be approximately 1.0",
+        )
 
     def test_top_features_have_significant_importance(self):
         """Test that top features have significant importance."""
@@ -68,27 +75,31 @@ class TestFeatureImportance(unittest.TestCase):
         # Assert that top features have significant importance (e.g., at least 3%)
         for _, row in top_features.iterrows():
             self.assertGreaterEqual(
-                row['Importance'], 0.03,
-                f"Top feature '{row['Feature']}' should have importance of at least 5%"
+                row["Importance"],
+                0.03,
+                f"Top feature '{row['Feature']}' should have importance of at least 5%",
             )
 
         # Assert that top 5 features collectively account for significant portion
         # of importance
-        top_importance_sum = top_features['Importance'].sum()
+        top_importance_sum = top_features["Importance"].sum()
         self.assertGreaterEqual(
-            top_importance_sum, 0.5,
+            top_importance_sum,
+            0.5,
             f"Top 5 features should account for at least 50% of total importance, got {
-                top_importance_sum:.2f}"
+                top_importance_sum:.2f}",
         )
 
     def test_generate_feature_importance_plot(self):
         """Generate feature importance plot and save to file."""
         # Create plot
         plt.figure(figsize=(10, 6))
-        plt.barh(self.feature_importance_df['Feature'],
-                 self.feature_importance_df['Importance'])
-        plt.xlabel('Importance')
-        plt.title('Built-in Feature Importance')
+        plt.barh(
+            self.feature_importance_df["Feature"],
+            self.feature_importance_df["Importance"],
+        )
+        plt.xlabel("Importance")
+        plt.title("Built-in Feature Importance")
         plt.gca().invert_yaxis()
 
         # Save plot to file instead of showing it
@@ -97,10 +108,12 @@ class TestFeatureImportance(unittest.TestCase):
         plt.close()
 
         # Assert that the plot file was created
-        self.assertTrue(os.path.exists(plot_path),
-                        f"Plot file {plot_path} should exist")
-        self.assertGreater(os.path.getsize(plot_path), 0,
-                           f"Plot file {plot_path} should not be empty")
+        self.assertTrue(
+            os.path.exists(plot_path), f"Plot file {plot_path} should exist"
+        )
+        self.assertGreater(
+            os.path.getsize(plot_path), 0, f"Plot file {plot_path} should not be empty"
+        )
 
         print(f"Feature importance plot saved to {plot_path}")
 

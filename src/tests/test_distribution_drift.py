@@ -68,18 +68,20 @@ class TestDistributionDrift(unittest.TestCase):
         print("\nKS Test Results for All Columns:")
         print("-" * 80)
         print(
-            f"{'Column Name':<30} {'KS-statistic':<15} {'p-value':<15} {'Alpha':<10} {'Result':<10}")
+            f"{'Column Name':<30} {'KS-statistic':<15} {'p-value':<15} {'Alpha':<10} {'Result':<10}"
+        )
         print("-" * 80)
 
         for column_name in self.columns:
             try:
                 # Use different alpha for distance feature
-                alpha = distance_alpha if column_name == 'distance' else standard_alpha
+                alpha = distance_alpha if column_name == "distance" else standard_alpha
 
                 ks_stat, p_value = self.ks_test(column_name)
                 result = "PASS" if p_value > alpha else "FAIL"
                 print(
-                    f"{column_name:<30} {ks_stat:<15.6f} {p_value:<15.6f} {alpha:<10.3f} {result:<10}")
+                    f"{column_name:<30} {ks_stat:<15.6f} {p_value:<15.6f} {alpha:<10.3f} {result:<10}"
+                )
 
                 if p_value <= alpha:
                     failed_features.append((column_name, ks_stat, p_value, alpha))
@@ -91,7 +93,9 @@ class TestDistributionDrift(unittest.TestCase):
 
         # Assert that no features have distribution drift
         if failed_features:
-            failure_message = "\nDistribution drift detected in the following features:\n"
+            failure_message = (
+                "\nDistribution drift detected in the following features:\n"
+            )
             for feature, ks_stat, p_value, alpha in failed_features:
                 failure_message += f"  - {feature}: KS-statistic={
                     ks_stat:.6f}, p-value={
@@ -122,13 +126,14 @@ class TestDistributionDrift(unittest.TestCase):
             def test_method(self, column=column_name):
                 try:
                     # Use different alpha for distance feature
-                    alpha = distance_alpha if column == 'distance' else standard_alpha
+                    alpha = distance_alpha if column == "distance" else standard_alpha
 
                     ks_stat, p_value = self.ks_test(column)
                     self.assertGreater(
-                        p_value, alpha,
+                        p_value,
+                        alpha,
                         f"Distribution drift detected in feature '{column}': "
-                        f"KS-statistic={ks_stat:.6f}, p-value={p_value:.6f}, alpha={alpha:.3f}"
+                        f"KS-statistic={ks_stat:.6f}, p-value={p_value:.6f}, alpha={alpha:.3f}",
                     )
                 except Exception as e:
                     self.fail(f"Error testing feature '{column}': {str(e)}")

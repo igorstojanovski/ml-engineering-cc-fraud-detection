@@ -29,12 +29,12 @@ def load_model():
 model = load_model()
 
 
-@app.route('/', methods=['GET'])
+@app.route("/", methods=["GET"])
 def get():
     return jsonify({"message": "API is up and running!"})
 
 
-@app.route('/health', methods=['GET'])
+@app.route("/health", methods=["GET"])
 def health():
     """Health check endpoint"""
     if model is not None:
@@ -42,7 +42,7 @@ def health():
     return jsonify({"status": "unhealthy", "model_loaded": False}), 503
 
 
-@app.route('/predict', methods=['POST'])
+@app.route("/predict", methods=["POST"])
 def predict():
     """
     Endpoint to make fraud predictions on transaction data
@@ -120,7 +120,7 @@ def predict():
                 "prediction": int(prediction[0]),  # 0: not fraud, 1: fraud
                 "is_fraud": bool(prediction[0]),
                 "fraud_probability": float(probability[0]),
-                "transaction_id": transaction.get("trans_num", "unknown")
+                "transaction_id": transaction.get("trans_num", "unknown"),
             }
 
             return jsonify(result)
@@ -139,12 +139,14 @@ def predict():
 
             results = []
             for i, transaction in enumerate(transactions):
-                results.append({
-                    "prediction": int(predictions[i]),
-                    "is_fraud": bool(predictions[i]),
-                    "fraud_probability": float(probabilities[i]),
-                    "transaction_id": transaction.get("trans_num", f"unknown_{i}")
-                })
+                results.append(
+                    {
+                        "prediction": int(predictions[i]),
+                        "is_fraud": bool(predictions[i]),
+                        "fraud_probability": float(probabilities[i]),
+                        "transaction_id": transaction.get("trans_num", f"unknown_{i}"),
+                    }
+                )
 
             return jsonify({"results": results})
 
@@ -175,9 +177,17 @@ def preprocess_data(df):
     try:
         # Check if data is already preprocessed
         required_columns = [
-            'category', 'gender', 'transaction_hour', 'transaction_month',
-            'is_weekend', 'day_of_week', 'part_of_day', 'age',
-            'distance', 'city_pop_bin', 'amt_yeo_johnson'
+            "category",
+            "gender",
+            "transaction_hour",
+            "transaction_month",
+            "is_weekend",
+            "day_of_week",
+            "part_of_day",
+            "age",
+            "distance",
+            "city_pop_bin",
+            "amt_yeo_johnson",
         ]
 
         # If all required columns are present, data is already preprocessed
@@ -199,7 +209,7 @@ def preprocess_data(df):
             ds_url="",  # Not needed as we're not loading from file
             output_filename="",  # Not saving to file
             context="api",
-            name="API Prediction"
+            name="API Prediction",
         )
 
         # Create and apply preprocessing pipeline
@@ -228,13 +238,13 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     # Haversine formula
     dlon = lon2 - lon1
     dlat = lat2 - lat1
-    a = np.sin(dlat / 2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2)**2
+    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
     c = 2 * np.arcsin(np.sqrt(a))
     r = 6371  # Radius of earth in kilometers
     return c * r
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Run the Flask app
-    port = int(os.environ.get('PORT', 5001))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=port, debug=True)

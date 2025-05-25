@@ -1,6 +1,7 @@
 """
 Example client script to demonstrate how to use the fraud detection API
 """
+
 import requests
 import json
 import time
@@ -33,13 +34,12 @@ def start_api_server():
         server_process = subprocess.Popen(
             [sys.executable, os.path.join(current_dir, "api.py")],
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
         )
 
         # Wait for server to start (up to 10 seconds)
         for _ in range(10):
             try:
-                response = requests.get(f"{API_URL}/health", timeout=1)
                 print("API server started successfully.")
                 return True
             except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
@@ -85,7 +85,7 @@ def test_single_prediction():
         "age": 0.4567901234567901,
         "distance": 0.16205439081001802,
         "city_pop_bin": 0.0,
-        "amt_yeo_johnson": 0.043759851582931636
+        "amt_yeo_johnson": 0.043759851582931636,
     }
 
     try:
@@ -93,7 +93,7 @@ def test_single_prediction():
         response = requests.post(
             f"{API_URL}/predict",
             json={"transaction_data": transaction},
-            headers={"Content-Type": "application/json"}
+            headers={"Content-Type": "application/json"},
         )
 
         print("Single Prediction Response:")
@@ -122,7 +122,7 @@ def test_batch_prediction():
             "age": 0.4567901234567901,
             "distance": 0.16205439081001802,
             "city_pop_bin": 0.0,
-            "amt_yeo_johnson": 0.043759851582931636
+            "amt_yeo_johnson": 0.043759851582931636,
         },
         {
             "category": 0.7692307692307693,
@@ -135,7 +135,7 @@ def test_batch_prediction():
             "age": 0.18518518518518517,
             "distance": 0.6949745858768592,
             "city_pop_bin": 0.8,
-            "amt_yeo_johnson": 0.20283470583231186
+            "amt_yeo_johnson": 0.20283470583231186,
         },
         {
             "category": 0.38461538461538464,
@@ -148,8 +148,8 @@ def test_batch_prediction():
             "age": 0.43209876543209874,
             "distance": 0.39095977319524644,
             "city_pop_bin": 0.2,
-            "amt_yeo_johnson": 0.23004177642877963
-        }
+            "amt_yeo_johnson": 0.23004177642877963,
+        },
     ]
 
     try:
@@ -157,7 +157,7 @@ def test_batch_prediction():
         response = requests.post(
             f"{API_URL}/predict",
             json={"transactions": transactions},
-            headers={"Content-Type": "application/json"}
+            headers={"Content-Type": "application/json"},
         )
 
         print("Batch Prediction Response:")

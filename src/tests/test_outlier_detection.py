@@ -54,7 +54,7 @@ class TestOutlierDetection(unittest.TestCase):
 
         # Calculate Z-scores
         try:
-            z_scores = np.abs(zscore(feature_data, nan_policy='omit'))
+            z_scores = np.abs(zscore(feature_data, nan_policy="omit"))
 
             # Count outliers
             outliers = np.sum(z_scores > threshold)
@@ -80,13 +80,16 @@ class TestOutlierDetection(unittest.TestCase):
 
         print("\nOutlier Detection Results (Z-score method):")
         print("-" * 80)
-        print(f"{'Feature Name':<30} {'Outliers':<10} {'Percentage':<12} {'Max Z-score':<12} {'Status':<10}")
+        print(
+            f"{'Feature Name':<30} {'Outliers':<10} {'Percentage':<12} {'Max Z-score':<12} {'Status':<10}"
+        )
         print("-" * 80)
 
         for feature in self.columns:
             try:
                 outliers, percentage, max_zscore = self.detect_outliers_zscore(
-                    feature, threshold)
+                    feature, threshold
+                )
 
                 # Determine status
                 if not np.issubdtype(self.X_train[feature].dtype, np.number):
@@ -95,12 +98,14 @@ class TestOutlierDetection(unittest.TestCase):
                 elif percentage > max_acceptable_percentage:
                     status = "WARNING"
                     problematic_features.append(
-                        (feature, outliers, percentage, max_zscore))
+                        (feature, outliers, percentage, max_zscore)
+                    )
                 else:
                     status = "OK"
 
                 print(
-                    f"{feature:<30} {outliers:<10} {percentage:<12.2f}% {max_zscore:<12.2f} {status:<10}")
+                    f"{feature:<30} {outliers:<10} {percentage:<12.2f}% {max_zscore:<12.2f} {status:<10}"
+                )
 
             except Exception as e:
                 print(f"{feature:<30} Error: {str(e)}")
@@ -117,7 +122,9 @@ class TestOutlierDetection(unittest.TestCase):
                     max_zscore:.2f}\n"
 
             print(warning_message)
-            print("Consider handling these outliers using clipping, transformation, or removal.")
+            print(
+                "Consider handling these outliers using clipping, transformation, or removal."
+            )
 
         if skipped_features:
             print("\nSkipped features:")
@@ -147,15 +154,17 @@ class TestOutlierDetection(unittest.TestCase):
             def test_method(self, feature=feature):
                 try:
                     outliers, percentage, max_zscore = self.detect_outliers_zscore(
-                        feature, threshold)
+                        feature, threshold
+                    )
 
                     # Assert that the percentage of outliers is within acceptable limits
                     self.assertLessEqual(
-                        percentage, max_acceptable_percentage,
+                        percentage,
+                        max_acceptable_percentage,
                         f"Excessive outliers detected in feature '{feature}': "
                         f"{outliers} outliers ({
                             percentage:.2f}%), max Z-score: {
-                            max_zscore:.2f}"
+                            max_zscore:.2f}",
                     )
                 except Exception as e:
                     self.fail(f"Error testing feature '{feature}': {str(e)}")

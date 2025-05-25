@@ -24,7 +24,8 @@ from sklearn.metrics import (
 from src.libs.libs import *
 
 import warnings
-warnings.filterwarnings('ignore')
+
+warnings.filterwarnings("ignore")
 
 
 mlflow.set_tracking_uri(uri=src.constants.ML_FLOW_URI)
@@ -50,7 +51,8 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
     y_train_smote = smote_resampled_df[TARGET_COLUMN]
     # random_state=42 to ensure reproducibility
     X_train, X_test, y_train, y_test = train_test_split(
-        X_train_smote, y_train_smote, test_size=0.3, random_state=42)
+        X_train_smote, y_train_smote, test_size=0.3, random_state=42
+    )
 
     # Train model
     dt_model = DecisionTreeClassifier(random_state=42)
@@ -61,7 +63,7 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
         "max_depth": [20, 30],
         "min_samples_split": [2, 5],
         "min_samples_leaf": [1, 2],
-        "max_features": ["sqrt"]
+        "max_features": ["sqrt"],
     }
 
     # Create the grid search object
@@ -69,9 +71,9 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
         estimator=dt_model,
         param_grid=param_grid,
         cv=3,  # 5-fold cross-validation
-        scoring='f1',  # or 'f1', 'roc_auc', etc.
+        scoring="f1",  # or 'f1', 'roc_auc', etc.
         n_jobs=-1,  # Use all processors
-        verbose=0
+        verbose=0,
     )
 
     # Fit to your training data
@@ -107,14 +109,18 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
     mlflow.log_metric("false_negative", false_negative)
 
     train_precision_pos_class = precision_score(
-        y_train, train_prediction, pos_label=1, zero_division=0)
+        y_train, train_prediction, pos_label=1, zero_division=0
+    )
     test_precision_pos_class = precision_score(
-        y_test, test_prediction, pos_label=1, zero_division=0)
+        y_test, test_prediction, pos_label=1, zero_division=0
+    )
 
     train_recall_pos_class = recall_score(
-        y_train, train_prediction, pos_label=1, zero_division=0)
+        y_train, train_prediction, pos_label=1, zero_division=0
+    )
     test_recall_pos_class = recall_score(
-        y_test, test_prediction, pos_label=1, zero_division=0)
+        y_test, test_prediction, pos_label=1, zero_division=0
+    )
 
     mlflow.log_metric("recall on class fraud for train dataset", train_recall_pos_class)
     mlflow.log_metric("recall on class fraud for test dataset", test_recall_pos_class)
@@ -140,8 +146,9 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
     mlflow.log_metric("accuracy", acc)
 
     # Log model
-    mlflow.sklearn.log_model(best_model, signature=signature,
-                             input_example=X_train, artifact_path="model")
+    mlflow.sklearn.log_model(
+        best_model, signature=signature, input_example=X_train, artifact_path="model"
+    )
     mlflow.end_run()
 
 test_score = accuracy_score(y_test, best_model.predict(X_test)) * 100

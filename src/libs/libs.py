@@ -23,7 +23,7 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix,
     roc_auc_score,
-    make_scorer
+    make_scorer,
 )
 
 
@@ -38,7 +38,7 @@ class ChangeDataType(BaseEstimator, TransformerMixin):
     def transform(self, X):
         X = X.copy()
         for col in self.columns:
-            X[col] = pd.to_datetime(X[col], errors='coerce')
+            X[col] = pd.to_datetime(X[col], errors="coerce")
         return X
 
 
@@ -49,27 +49,35 @@ class DateTimeFeatures(BaseEstimator, TransformerMixin):
         self.date_column = date_column
         self.transaction_hour_bins = transaction_hour_bins
         self.transaction_hour_labels = transaction_hour_labels
-        self.new_columns = ['transaction_hour', 'transaction_month',
-                            'is_weekend', 'day_of_week', 'part_of_day']
+        self.new_columns = [
+            "transaction_hour",
+            "transaction_month",
+            "is_weekend",
+            "day_of_week",
+            "part_of_day",
+        ]
 
     def fit(self, X, y=None):
         return self
 
     def transform(self, X):
         X = X.copy()
-        X['transaction_hour'] = X[self.date_column].dt.hour
-        X['transaction_month'] = X[self.date_column].dt.month
-        X['is_weekend'] = X[self.date_column].dt.weekday.isin(
-            [5, 6]).round().astype('int64')
+        X["transaction_hour"] = X[self.date_column].dt.hour
+        X["transaction_month"] = X[self.date_column].dt.month
+        X["is_weekend"] = (
+            X[self.date_column].dt.weekday.isin([5, 6]).round().astype("int64")
+        )
 
         # Day of week: Monday=0, Sunday=6
-        X['day_of_week'] = X[self.date_column].dt.day_name()
+        X["day_of_week"] = X[self.date_column].dt.day_name()
 
         # Part of day classification
-        X['part_of_day'] = pd.cut(X['transaction_hour'],
-                                  bins=self.transaction_hour_bins,
-                                  labels=self.transaction_hour_labels,
-                                  right=True)
+        X["part_of_day"] = pd.cut(
+            X["transaction_hour"],
+            bins=self.transaction_hour_bins,
+            labels=self.transaction_hour_labels,
+            right=True,
+        )
         return X
 
 
@@ -77,7 +85,7 @@ class AgeFeature(BaseEstimator, TransformerMixin):
     # Calculates age based on the date of birth (DOB) column.
     def __init__(self, dob_column):
         self.dob_column = dob_column
-        self.new_column = 'age'
+        self.new_column = "age"
 
     def fit(self, X, y=None):
         return self
@@ -97,7 +105,7 @@ class CalculateDistance(BaseEstimator, TransformerMixin):
         self.long_col = long_col
         self.merch_lat_col = merch_lat_col
         self.merch_long_col = merch_long_col
-        self.new_column = 'distance'
+        self.new_column = "distance"
 
     def fit(self, X, y=None):
         return self
@@ -127,7 +135,7 @@ class BinCityPopulation(BaseEstimator, TransformerMixin):
     def __init__(self, city_pop_bins, city_pop_labels):
         self.city_pop_bins = city_pop_bins
         self.city_pop_labels = city_pop_labels
-        self.new_column = 'city_pop_bin'
+        self.new_column = "city_pop_bin"
 
     def fit(self, X, y=None):
         return self
@@ -135,23 +143,24 @@ class BinCityPopulation(BaseEstimator, TransformerMixin):
     def transform(self, X):
         X = X.copy()
         X[self.new_column] = pd.cut(
-            X['city_pop'], bins=self.city_pop_bins, labels=self.city_pop_labels)
+            X["city_pop"], bins=self.city_pop_bins, labels=self.city_pop_labels
+        )
         return X
 
 
 class YeoJohnsonTransformer(BaseEstimator, TransformerMixin):
     # Applies the Yeo-Johnson transformation to normalize the 'amt' column.
     def __init__(self):
-        self.transformer = PowerTransformer(method='yeo-johnson')
-        self.new_column = 'amt_yeo_johnson'
+        self.transformer = PowerTransformer(method="yeo-johnson")
+        self.new_column = "amt_yeo_johnson"
 
     def fit(self, X, y=None):
-        self.transformer.fit(X[['amt']])
+        self.transformer.fit(X[["amt"]])
         return self
 
     def transform(self, X):
         X = X.copy()
-        X[self.new_column] = self.transformer.transform(X[['amt']])
+        X[self.new_column] = self.transformer.transform(X[["amt"]])
         return X
 
 
@@ -164,7 +173,7 @@ class DropColumns(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        X = X.drop(columns=self.columns, errors='ignore')
+        X = X.drop(columns=self.columns, errors="ignore")
         self.remaining_columns = X.columns
         return X
 
@@ -204,6 +213,7 @@ class ScaleFeatures(BaseEstimator, TransformerMixin):
         return X
 
     # Preprocessing pipeline
+
 
 # Class to oversample the minority class using the Synthetic Minority
 # Over-sampling Technique (SMOTE)
@@ -286,14 +296,16 @@ class SMOTETomekSampler:
         X_resampled, y_resampled = self.sampler.fit_resample(X, y)
         return X_resampled.assign(**{self.target_column: y_resampled})
 
+
 # 1. Logistic Regression
 
 
 def print_score(clf, X_train, y_train, X_test, y_test, train=True):
     if train:
         pred = clf.predict(X_train)
-        clf_report = pd.DataFrame(classification_report(
-            y_train, pred, output_dict=True))
+        clf_report = pd.DataFrame(
+            classification_report(y_train, pred, output_dict=True)
+        )
         print("Train Result:\n================================================")
         print(f"Accuracy Score: {accuracy_score(y_train, pred) * 100:.2f}%")
         print("_______________________________________________")

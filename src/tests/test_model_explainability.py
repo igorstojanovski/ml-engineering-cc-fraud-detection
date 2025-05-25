@@ -49,16 +49,24 @@ class TestModelExplainability(unittest.TestCase):
         """Test that the model has built-in feature importances."""
         # Check if model has feature_importances_ attribute (common in tree-based
         # models)
-        self.assertTrue(hasattr(self.model, 'feature_importances_'),
-                        "Model should have built-in feature importances")
+        self.assertTrue(
+            hasattr(self.model, "feature_importances_"),
+            "Model should have built-in feature importances",
+        )
 
         # Check that feature importances are valid
         importances = self.model.feature_importances_
-        self.assertEqual(len(importances), len(self.X_train.columns),
-                         "Number of feature importances should match number of features")
-        self.assertAlmostEqual(sum(importances), 1.0,
-                               msg="Sum of feature importances should be approximately 1.0",
-                               places=5)
+        self.assertEqual(
+            len(importances),
+            len(self.X_train.columns),
+            "Number of feature importances should match number of features",
+        )
+        self.assertAlmostEqual(
+            sum(importances),
+            1.0,
+            msg="Sum of feature importances should be approximately 1.0",
+            places=5,
+        )
 
     def test_permutation_importance(self):
         """Test permutation importance calculation and validate results."""
@@ -68,11 +76,13 @@ class TestModelExplainability(unittest.TestCase):
         )
 
         # Format results
-        perm_importance_df = pd.DataFrame({
-            'Feature': self.X_test.columns,
-            'Importance': result.importances_mean,
-            'Std': result.importances_std
-        }).sort_values(by='Importance', ascending=False)
+        perm_importance_df = pd.DataFrame(
+            {
+                "Feature": self.X_test.columns,
+                "Importance": result.importances_mean,
+                "Std": result.importances_std,
+            }
+        ).sort_values(by="Importance", ascending=False)
 
         # Print the top 10 features by permutation importance
         print("\nTop 10 Features by Permutation Importance:")
@@ -85,27 +95,36 @@ class TestModelExplainability(unittest.TestCase):
 
         # Test 1: Check that permutation importance results exist
         self.assertIsNotNone(result, "Permutation importance result should not be None")
-        self.assertGreater(len(result.importances_mean), 0,
-                           "Permutation importance should have results")
+        self.assertGreater(
+            len(result.importances_mean),
+            0,
+            "Permutation importance should have results",
+        )
 
         # Test 2: Check that at least some features have non-zero importance
-        self.assertGreater(np.sum(result.importances_mean > 0), 0,
-                           "At least some features should have positive importance")
+        self.assertGreater(
+            np.sum(result.importances_mean > 0),
+            0,
+            "At least some features should have positive importance",
+        )
 
         # Test 3: Check that top features have significant importance
-        top_importance = perm_importance_df['Importance'].iloc[0]
-        self.assertGreater(top_importance, 0.01,
-                           f"Top feature should have meaningful importance, got {top_importance}")
+        top_importance = perm_importance_df["Importance"].iloc[0]
+        self.assertGreater(
+            top_importance,
+            0.01,
+            f"Top feature should have meaningful importance, got {top_importance}",
+        )
 
         # Test 4: Generate and save permutation importance plot
         plt.figure(figsize=(10, 8))
-        features = perm_importance_df['Feature'].head(15)
-        importances = perm_importance_df['Importance'].head(15)
-        std = perm_importance_df['Std'].head(15)
+        features = perm_importance_df["Feature"].head(15)
+        importances = perm_importance_df["Importance"].head(15)
+        std = perm_importance_df["Std"].head(15)
 
         plt.barh(features, importances)
-        plt.xlabel('Permutation Importance')
-        plt.title('Top 15 Features by Permutation Importance')
+        plt.xlabel("Permutation Importance")
+        plt.title("Top 15 Features by Permutation Importance")
 
         # Save plot
         plot_path = "output/permutation_importance_plot.png"
@@ -114,8 +133,9 @@ class TestModelExplainability(unittest.TestCase):
         plt.close()
 
         # Check that plot was created
-        self.assertTrue(os.path.exists(plot_path),
-                        f"Plot file {plot_path} should exist")
+        self.assertTrue(
+            os.path.exists(plot_path), f"Plot file {plot_path} should exist"
+        )
         print(f"Permutation importance plot saved to {plot_path}")
 
     def test_compare_feature_importance_methods(self):
@@ -126,21 +146,26 @@ class TestModelExplainability(unittest.TestCase):
         )
 
         # Get built-in feature importances
-        built_in_importances = pd.DataFrame({
-            'Feature': self.X_test.columns,
-            'Built_in_Importance': self.model.feature_importances_
-        })
+        built_in_importances = pd.DataFrame(
+            {
+                "Feature": self.X_test.columns,
+                "Built_in_Importance": self.model.feature_importances_,
+            }
+        )
 
         # Get permutation importances
-        perm_importances = pd.DataFrame({
-            'Feature': self.X_test.columns,
-            'Permutation_Importance': result.importances_mean
-        })
+        perm_importances = pd.DataFrame(
+            {
+                "Feature": self.X_test.columns,
+                "Permutation_Importance": result.importances_mean,
+            }
+        )
 
         # Merge the two
-        comparison_df = pd.merge(built_in_importances, perm_importances, on='Feature')
+        comparison_df = pd.merge(built_in_importances, perm_importances, on="Feature")
         comparison_df = comparison_df.sort_values(
-            by='Built_in_Importance', ascending=False)
+            by="Built_in_Importance", ascending=False
+        )
 
         # Print comparison of top 10 features
         print("\nComparison of Feature Importance Methods (Top 10):")
@@ -152,34 +177,47 @@ class TestModelExplainability(unittest.TestCase):
         print(f"\nFeature importance comparison saved to {output_file}")
 
         # Test: Check for some correlation between the two methods
-        correlation = comparison_df['Built_in_Importance'].corr(
-            comparison_df['Permutation_Importance'])
+        correlation = comparison_df["Built_in_Importance"].corr(
+            comparison_df["Permutation_Importance"]
+        )
         print(
-            f"\nCorrelation between built-in and permutation importance: {correlation:.4f}")
+            f"\nCorrelation between built-in and permutation importance: {correlation:.4f}"
+        )
 
         # The correlation doesn't need to be perfect, but should show some relationship
         # A very low or negative correlation might indicate issues with the model
-        self.assertGreater(correlation, 0.1,
-                           f"Built-in and permutation importance should show some correlation, got {correlation:.4f}")
+        self.assertGreater(
+            correlation,
+            0.1,
+            f"Built-in and permutation importance should show some correlation, got {correlation:.4f}",
+        )
 
         # Create scatter plot to visualize relationship
         plt.figure(figsize=(8, 8))
-        plt.scatter(comparison_df['Built_in_Importance'],
-                    comparison_df['Permutation_Importance'], alpha=0.7)
-        plt.xlabel('Built-in Feature Importance')
-        plt.ylabel('Permutation Importance')
-        plt.title('Comparison of Feature Importance Methods')
+        plt.scatter(
+            comparison_df["Built_in_Importance"],
+            comparison_df["Permutation_Importance"],
+            alpha=0.7,
+        )
+        plt.xlabel("Built-in Feature Importance")
+        plt.ylabel("Permutation Importance")
+        plt.title("Comparison of Feature Importance Methods")
 
         # Add feature names for top features
         for i, row in comparison_df.head(5).iterrows():
-            plt.annotate(row['Feature'],
-                         (row['Built_in_Importance'], row['Permutation_Importance']),
-                         xytext=(5, 5), textcoords='offset points')
+            plt.annotate(
+                row["Feature"],
+                (row["Built_in_Importance"], row["Permutation_Importance"]),
+                xytext=(5, 5),
+                textcoords="offset points",
+            )
 
         # Add diagonal line for reference
-        max_val = max(comparison_df['Built_in_Importance'].max(),
-                      comparison_df['Permutation_Importance'].max())
-        plt.plot([0, max_val], [0, max_val], 'k--', alpha=0.5)
+        max_val = max(
+            comparison_df["Built_in_Importance"].max(),
+            comparison_df["Permutation_Importance"].max(),
+        )
+        plt.plot([0, max_val], [0, max_val], "k--", alpha=0.5)
 
         # Save plot
         plot_path = "output/importance_comparison_plot.png"
@@ -188,8 +226,9 @@ class TestModelExplainability(unittest.TestCase):
         plt.close()
 
         # Check that plot was created
-        self.assertTrue(os.path.exists(plot_path),
-                        f"Plot file {plot_path} should exist")
+        self.assertTrue(
+            os.path.exists(plot_path), f"Plot file {plot_path} should exist"
+        )
         print(f"Importance comparison plot saved to {plot_path}")
 
 
