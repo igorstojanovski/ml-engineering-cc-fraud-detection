@@ -138,8 +138,8 @@ class TestFairnessAndBias(unittest.TestCase):
             self.assertGreaterEqual(
                 min_precision,
                 self.min_performance_threshold,
-                f"Minimum precision across {sensitive_column} groups below threshold: {
-                    min_precision:.4f}",
+                f"Minimum precision across {sensitive_column} "
+                f"groups below threshold: {min_precision:.4f}",
             )
 
             self.assertGreaterEqual(
@@ -205,8 +205,8 @@ class TestFairnessAndBias(unittest.TestCase):
             self.assertLessEqual(
                 selection_rate_disparity,
                 self.max_disparity_threshold,
-                f"Selection rate disparity for {sensitive_column} exceeds threshold: {
-                    selection_rate_disparity:.4f}",
+                f"Selection rate disparity for {sensitive_column} "
+                f"exceeds threshold: {selection_rate_disparity:.4f}",
             )
 
             self.assertLessEqual(
