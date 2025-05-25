@@ -21,7 +21,7 @@ class TestOutlierDetection(unittest.TestCase):
         # Apply SMOTE
         smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
         cls.smote_resampled_df = smote_sampler.fit_resample(cls.train_preprocessed)
-        print(f"SMOTE completed for train data")
+        print("SMOTE completed for train data")
 
         # Select feature columns (independent variables) from the training data
         cls.X_train_smote = cls.smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
@@ -83,7 +83,11 @@ class TestOutlierDetection(unittest.TestCase):
         print("\nOutlier Detection Results (Z-score method):")
         print("-" * 80)
         print(
-            f"{'Feature Name':<30} {'Outliers':<10} {'Percentage':<12} {'Max Z-score':<12} {'Status':<10}"
+            f"{'Feature Name':<30} "
+            f"{'Outliers':<10} "
+            f"{'Percentage':<12} "
+            f"{'Max Z-score':<12} "
+            f"{'Status':<10}"
         )
         print("-" * 80)
 
@@ -106,7 +110,11 @@ class TestOutlierDetection(unittest.TestCase):
                     status = "OK"
 
                 print(
-                    f"{feature:<30} {outliers:<10} {percentage:<12.2f}% {max_zscore:<12.2f} {status:<10}"
+                    f"{feature:<30} "
+                    f"{outliers:<10} "
+                    f"{percentage:<12.2f}% "
+                    f"{max_zscore:<12.2f} "
+                    f"{status:<10}"
                 )
 
             except Exception as e:

@@ -8,20 +8,29 @@ import mlflow.sklearn
 import pandas as pd
 import seaborn as sns
 from mlflow.models.signature import infer_signature
-from sklearn.metrics import (accuracy_score, confusion_matrix, f1_score,
-                             precision_score, recall_score)
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.tree import DecisionTreeClassifier
 
-import src.constants
-from src.constants import DATA_URI, TARGET_COLUMN
-from src.libs.libs import *
+from src.constants import DATA_URI, TARGET_COLUMN, ML_FLOW_URI, EXPERIMENT_NAME
+from src.libs.libs import SMOTESampler, print_score
+
+warnings.filterwarnings("ignore")
+
+mlflow.set_tracking_uri(uri=ML_FLOW_URI)
+mlflow.set_experiment(EXPERIMENT_NAME)
 
 warnings.filterwarnings("ignore")
 
 
-mlflow.set_tracking_uri(uri=src.constants.ML_FLOW_URI)
-mlflow.set_experiment(src.constants.EXPERIMENT_NAME)
+mlflow.set_tracking_uri(uri=ML_FLOW_URI)
+mlflow.set_experiment(EXPERIMENT_NAME)
 # Load the dataset
 with mlflow.start_run(run_name="decision_tree_experiment") as run:
     mlflow.artifacts.download_artifacts(DATA_URI, dst_path="./downloaded_artifacts")
@@ -32,7 +41,7 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
     # Apply SMOTE
     smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
     smote_resampled_df = smote_sampler.fit_resample(train_preprocessed)
-    print(f"SMOTE completed for train data")
+    print("SMOTE completed for train data")
 
     # Select feature columns (independent variables) from the training data to
     # create the training set

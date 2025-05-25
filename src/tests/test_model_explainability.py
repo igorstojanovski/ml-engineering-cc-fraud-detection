@@ -28,7 +28,7 @@ class TestModelExplainability(unittest.TestCase):
         # Apply SMOTE
         smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
         cls.smote_resampled_df = smote_sampler.fit_resample(cls.train_preprocessed)
-        print(f"SMOTE completed for train data")
+        print("SMOTE completed for train data")
 
         # Select feature columns (independent variables) from the training data
         cls.X_train_smote = cls.smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
@@ -122,7 +122,6 @@ class TestModelExplainability(unittest.TestCase):
         plt.figure(figsize=(10, 8))
         features = perm_importance_df["Feature"].head(15)
         importances = perm_importance_df["Importance"].head(15)
-        std = perm_importance_df["Std"].head(15)
 
         plt.barh(features, importances)
         plt.xlabel("Permutation Importance")
@@ -191,7 +190,8 @@ class TestModelExplainability(unittest.TestCase):
         self.assertGreater(
             correlation,
             0.1,
-            f"Built-in and permutation importance should show some correlation, got {correlation:.4f}",
+            f"Built-in and permutation importance should show some correlation, "
+            f"got {correlation:.4f}",
         )
 
         # Create scatter plot to visualize relationship

@@ -23,7 +23,7 @@ class TestFeatureImportance(unittest.TestCase):
         # Apply SMOTE
         smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
         cls.smote_resampled_df = smote_sampler.fit_resample(cls.train_preprocessed)
-        print(f"SMOTE completed for train data")
+        print("SMOTE completed for train data")
 
         # Select feature columns (independent variables) from the training data
         cls.X_train_smote = cls.smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)

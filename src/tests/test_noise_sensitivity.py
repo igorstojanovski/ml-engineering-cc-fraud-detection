@@ -27,7 +27,7 @@ class TestNoiseSensitivity(unittest.TestCase):
         # Apply SMOTE
         smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
         cls.smote_resampled_df = smote_sampler.fit_resample(cls.train_preprocessed)
-        print(f"SMOTE completed for train data")
+        print("SMOTE completed for train data")
 
         # Select feature columns (independent variables) from the training data
         cls.X_train_smote = cls.smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
@@ -47,7 +47,7 @@ class TestNoiseSensitivity(unittest.TestCase):
         cls.baseline_precision = precision_score(cls.y_test, cls.baseline_predictions)
         cls.baseline_recall = recall_score(cls.y_test, cls.baseline_predictions)
 
-        print(f"\nBaseline Performance (No Noise):")
+        print("\nBaseline Performance (No Noise):")
         print(f"F1 Score: {cls.baseline_f1:.4f}")
         print(f"Accuracy: {cls.baseline_accuracy:.4f}")
         print(f"Precision: {cls.baseline_precision:.4f}")

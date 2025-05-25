@@ -1,5 +1,3 @@
-import warnings
-
 import matplotlib.pyplot as plt
 import mlflow
 import numpy as np
@@ -8,7 +6,17 @@ import seaborn as sns
 from sklearn.pipeline import Pipeline
 
 from src import constants
-from src.libs.libs import *
+from src.libs.libs import (
+    ChangeDataType,
+    DateTimeFeatures,
+    AgeFeature,
+    CalculateDistance,
+    BinCityPopulation,
+    YeoJohnsonTransformer,
+    DropColumns,
+    LabelEncoding,
+    ScaleFeatures,
+)
 
 
 class FraudDetectionConfig:
@@ -154,7 +162,7 @@ def log_to_mlflow(config, preprocessed, fig1, fig2, fig3):
     mlflow.set_tracking_uri(uri=config.mlflow_tracking_uri)
     mlflow.set_experiment(config.experiment_name)
 
-    with mlflow.start_run(run_name=config.context) as run:
+    with mlflow.start_run(run_name=config.context):
         mlflow.log_artifact(config.output_filename)
 
         dataset = mlflow.data.from_pandas(
@@ -248,10 +256,6 @@ def percentage(data, style="classic", plot_size=(10, 6)):
     ab = a.merge(b, on="category")
     ab["diff"] = ab["fraud percentage"] - ab["not fraud percentage"]
 
-    unique_categories = ab["category"].unique()
-    palette = sns.color_palette("husl", len(unique_categories))
-
-    color_dict = dict(zip(unique_categories, palette))
     with plt.style.context(style):
         fig, ax = plt.subplots(figsize=plot_size)
 

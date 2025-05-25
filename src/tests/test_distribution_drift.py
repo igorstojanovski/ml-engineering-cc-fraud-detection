@@ -1,6 +1,5 @@
 import unittest
 
-import numpy as np
 import pandas as pd
 from scipy.stats import ks_2samp
 from sklearn.model_selection import train_test_split
@@ -26,7 +25,7 @@ class TestDistributionDrift(unittest.TestCase):
         # Apply SMOTE
         smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
         cls.smote_resampled_df = smote_sampler.fit_resample(cls.train_preprocessed)
-        print(f"SMOTE completed for train data")
+        print("SMOTE completed for train data")
 
         # Select feature columns (independent variables) from the training data
         cls.X_train_smote = cls.smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
@@ -82,7 +81,11 @@ class TestDistributionDrift(unittest.TestCase):
                 ks_stat, p_value = self.ks_test(column_name)
                 result = "PASS" if p_value > alpha else "FAIL"
                 print(
-                    f"{column_name:<30} {ks_stat:<15.6f} {p_value:<15.6f} {alpha:<10.3f} {result:<10}"
+                    f"{column_name:<30} "
+                    f"{ks_stat:<15.6f} "
+                    f"{p_value:<15.6f} "
+                    f"{alpha:<10.3f} "
+                    f"{result:<10}"
                 )
 
                 if p_value <= alpha:

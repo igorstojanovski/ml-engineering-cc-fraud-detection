@@ -1,16 +1,18 @@
 import unittest
-
+import pandas as pd
+import numpy as np
 import mlflow
 import mlflow.sklearn
-import numpy as np
-import pandas as pd
-from fairlearn.metrics import (MetricFrame, false_positive_rate,
-                               selection_rate, true_positive_rate)
-from sklearn.metrics import f1_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
-
+from sklearn.metrics import f1_score, precision_score, recall_score
 from src.constants import MODEL_URI, TARGET_COLUMN
 from src.libs.libs import SMOTESampler
+from fairlearn.metrics import (
+    MetricFrame,
+    selection_rate,
+    true_positive_rate,
+    false_positive_rate,
+)
 
 
 class TestFairnessAndBias(unittest.TestCase):
@@ -29,7 +31,7 @@ class TestFairnessAndBias(unittest.TestCase):
         # Apply SMOTE
         smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
         cls.smote_resampled_df = smote_sampler.fit_resample(cls.train_preprocessed)
-        print(f"SMOTE completed for train data")
+        print("SMOTE completed for train data")
 
         # Select feature columns (independent variables) from the training data
         cls.X_train_smote = cls.smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
@@ -58,7 +60,7 @@ class TestFairnessAndBias(unittest.TestCase):
             # Skip if sensitive column doesn't exist
             if sensitive_column not in self.X_test.columns:
                 print(
-                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping."
+                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset.Skipping."
                 )
                 continue
 
@@ -74,7 +76,8 @@ class TestFairnessAndBias(unittest.TestCase):
                 # Skip groups with too few samples
                 if sum(group_mask) < 10:
                     print(
-                        f"Warning: Group '{group}' in '{sensitive_column}' has fewer than 10 samples. Skipping."
+                        f"Warning: Group '{group}' in '{sensitive_column}'"
+                        f" has fewer than 10 samples. Skipping."
                     )
                     continue
 
@@ -161,7 +164,8 @@ class TestFairnessAndBias(unittest.TestCase):
             # Skip if sensitive column doesn't exist
             if sensitive_column not in self.X_test.columns:
                 print(
-                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping."
+                    f"Warning: Sensitive column '{sensitive_column}'"
+                    f" not found in dataset. Skipping."
                 )
                 continue
 
@@ -227,7 +231,8 @@ class TestFairnessAndBias(unittest.TestCase):
             # Skip if sensitive column doesn't exist
             if sensitive_column not in self.X_test.columns:
                 print(
-                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping."
+                    f"Warning: Sensitive column '{sensitive_column}'"
+                    f" not found in dataset. Skipping."
                 )
                 continue
 
@@ -266,7 +271,8 @@ class TestFairnessAndBias(unittest.TestCase):
             # Skip if sensitive column doesn't exist
             if sensitive_column not in self.X_test.columns:
                 print(
-                    f"Warning: Sensitive column '{sensitive_column}' not found in dataset. Skipping."
+                    f"Warning: Sensitive column '{sensitive_column}'"
+                    f" not found in dataset. Skipping."
                 )
                 continue
 

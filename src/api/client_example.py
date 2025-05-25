@@ -22,7 +22,6 @@ def start_api_server():
     global server_process
     try:
         # Check if server is already running
-        response = requests.get(f"{API_URL}/health", timeout=2)
         print("API server is already running.")
         return True
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
@@ -52,7 +51,6 @@ def start_api_server():
 
 def stop_api_server():
     """Stop the API server if we started it"""
-    global server_process
     if server_process:
         print("Stopping API server...")
         server_process.terminate()

@@ -15,7 +15,10 @@ from xgboost import XGBClassifier
 
 import src.constants
 from src.constants import DATA_URI, TARGET_COLUMN
-from src.libs.libs import *
+from src.libs.libs import (
+    SMOTESampler,
+    print_score
+)
 
 warnings.filterwarnings("ignore")
 
@@ -34,7 +37,7 @@ with mlflow.start_run(run_name="Xgboost_experiment") as run:
     # Apply SMOTE
     smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
     smote_resampled_df = smote_sampler.fit_resample(train_preprocessed)
-    print(f"SMOTE completed for train data")
+    print("SMOTE completed for train data")
 
     # Select feature columns (independent variables) from the training data to
     # create the training set

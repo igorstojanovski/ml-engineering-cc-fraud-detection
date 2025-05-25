@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 # 🧠 MLflow
 import mlflow
 import mlflow.sklearn
-import numpy as np
 # 📊 Data and plotting
 import pandas as pd
 import seaborn as sns
@@ -24,12 +23,14 @@ from sklearn.metrics import (accuracy_score, classification_report,
                              recall_score)
 # 🤖 Machine learning
 from sklearn.model_selection import GridSearchCV, train_test_split
-from sklearn.pipeline import Pipeline
 
 # 🧩 Project-specific
-from src.constants import (DATA_URI, EXPERIMENT_NAME, ML_FLOW_URI,
+from src.constants import (EXPERIMENT_NAME, ML_FLOW_URI,
                            TARGET_COLUMN, TRAIN_DATASET_FILE_NAME)
-from src.libs.libs import *
+from src.libs.libs import (
+    SMOTESampler,
+    print_score
+)
 
 # 🔇 Suppress warnings
 warnings.filterwarnings("ignore")
@@ -67,7 +68,7 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
     # Apply SMOTE
     smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
     smote_resampled_df = smote_sampler.fit_resample(train_preprocessed)
-    print(f"SMOTE completed for train data")
+    print("SMOTE completed for train data")
 
     # Select feature columns (independent variables) from the training data to
     # create the training set

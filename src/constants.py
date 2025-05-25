@@ -21,7 +21,7 @@ VALIDATION_RUN_NAME = "validation"
 MODEL_URI = (
     "mlartifacts/282047854241216555/359dfc339a5541ba830ade905ec0b27b/artifacts/model/"
 )
-DATA_URI = "mlartifacts/282047854241216555/d3237dabc0064c7e97698fa56adba180/artifacts/train_preprocessed.csv"
+DATA_URI = "mlartifacts/282047854241216555/d3237dabc0064c7e97698fa56adba180/artifacts/train_preprocessed.csv"  # noqa: E501
 
 TARGET_COLUMN = "is_fraud"
 
