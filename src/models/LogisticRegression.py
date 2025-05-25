@@ -1,48 +1,72 @@
-import mlflow
-import mlflow.sklearn  
+# ⚙️ Standard library
+import os
+import json
+import pickle
+import tempfile
+from pathlib import Path
+from multiprocessing import cpu_count
+import warnings
 
+# 📊 Data and plotting
 import pandas as pd
-from sklearn.model_selection import train_test_split
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 🤖 Machine learning
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
     recall_score,
     f1_score,
     confusion_matrix,
-    )
-from sklearn.linear_model import LogisticRegression
+    classification_report,
+)
+from sklearn.pipeline import Pipeline
+
+# 🧠 MLflow
+import mlflow
+import mlflow.sklearn
+from mlflow.models.signature import infer_signature
+
+# 🛠️ Parallelism and memory control
+import joblib
+
+# 🧩 Project-specific
+from src.constants import TRAIN_DATASET_FILE_NAME, TARGET_COLUMN, DATA_URI, ML_FLOW_URI, EXPERIMENT_NAME
 from src.libs.libs import *
 
-import warnings
+# 🔇 Suppress warnings
 warnings.filterwarnings('ignore')
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.metrics import confusion_matrix
-import mlflow
-import tempfile
-import os
-from mlflow.models.signature import infer_signature
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report
-import src.constants
-from src.constants import TARGET_COLUMN, DATA_URI
 
-mlflow.set_tracking_uri(uri=src.constants.ML_FLOW_URI)
+# Choose a safe temp folder regardless of OS
+joblib_temp = os.getenv("JOBLIB_TEMP_FOLDER", tempfile.gettempdir())
+
+# Optional: place joblib temp files under a subdir so they don’t mix with other temp files
+joblib_temp = Path(joblib_temp) / "joblib_tmp"
+joblib_temp.mkdir(parents=True, exist_ok=True)
+
+os.environ["JOBLIB_TEMP_FOLDER"] = str(joblib_temp)
+
+# Use parallel backend
+joblib.parallel_backend("loky")
+
+mlflow.set_tracking_uri(uri=ML_FLOW_URI)
 # start it on console with: 
 # mlflow server --host 127.0.0.1 --port 8080
 
 # MLflow Experiment
-mlflow.set_experiment(src.constants.EXPERIMENT_NAME)
+mlflow.set_experiment(EXPERIMENT_NAME)
 # Load the dataset
 with mlflow.start_run(run_name="logistic_regression_experiment") as run:
     # Load the artifact from the current run or another run
-    mlflow.artifacts.download_artifacts(DATA_URI, dst_path="./downloaded_artifacts")
+    # mlflow.artifacts.download_artifacts(DATA_URI, dst_path="./downloaded_artifacts")
 
     # Load into DataFrame
-    train_preprocessed = pd.read_csv("train_preprocessed.csv")
+    train_preprocessed = pd.read_csv(TRAIN_DATASET_FILE_NAME)
 
     random_state = 15
 
@@ -69,11 +93,12 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
         }
 
     lr_model = LogisticRegression(solver='liblinear')
+    safe_jobs = max(1, cpu_count() - 2)
     grid_search = GridSearchCV(
                     estimator=lr_model,
                     param_grid=params_grid,
                     cv=3,
-                    n_jobs=-1,
+                    n_jobs=safe_jobs,
                     scoring='f1',  # Use F1 score for classification optimization
                 )
     grid_search.fit(X_train, y_train)
@@ -147,3 +172,26 @@ train_score = accuracy_score(y_train_smote, best_model.predict(X_train_smote)) *
 
 print_score(best_model, X_train_smote, y_train_smote, X_test, y_test, train=True)
 print_score(best_model, X_train_smote, y_train_smote, X_test, y_test, train=False)
+
+# Save the trained model as a .pkl file for DVC to track
+with open("outputs/models/logistic_model.pkl", "wb") as f:
+    pickle.dump(best_model, f)
+
+# Save metrics to a JSON file for DVC to track
+metrics = {
+    "f1": float(f1),
+    "precision": float(precision),
+    "recall": float(recall),
+    "accuracy": float(acc),
+    "true_positive": int(true_positive),
+    "true_negative": int(true_negative),
+    "false_positive": int(false_positive),
+    "false_negative": int(false_negative),
+    "recall_train_fraud": float(train_recall_pos_class),
+    "recall_test_fraud": float(test_recall_pos_class),
+    "train_score": float(train_score),
+    "test_score": float(test_score)
+}
+
+with open("outputs/metrics/logistic_metrics.json", "w") as f:
+    json.dump(metrics, f, indent=2)

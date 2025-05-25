@@ -1,0 +1,38 @@
+schema: '2.0'
+stages:
+  preprocess_train:
+    cmd: PYTHONPATH=. python src/dataprocessing/preprocessTrain.py
+    deps:
+    - path: data/training/fraudTrain.csv
+      hash: md5
+      md5: 9723893e5492dc0551036edcf596e284
+      size: 351238196
+    - path: src/dataprocessing/preprocessTrain.py
+      hash: md5
+      md5: 8a3490f679960d3e909bf85582cd42f8
+      size: 474
+    outs:
+    - path: outputs/preprocessed/train_preprocessed.csv
+      hash: md5
+      md5: b71062ee68bb87035a5970d8b95c881e
+      size: 181760450
+  train_model:
+    cmd: PYTHONPATH=. python src/models/LogisticRegression.py
+    deps:
+    - path: outputs/preprocessed/train_preprocessed.csv
+      hash: md5
+      md5: b71062ee68bb87035a5970d8b95c881e
+      size: 181760450
+    - path: src/models/LogisticRegression.py
+      hash: md5
+      md5: b570cb75c806f4e178e4675e57e57c67
+      size: 6902
+    outs:
+    - path: outputs/metrics/logistic_metrics.json
+      hash: md5
+      md5: 4abccf48a29640b7ac09197ad63c4885
+      size: 395
+    - path: outputs/models/logistic_model.pkl
+      hash: md5
+      md5: b6b08fc03b5c0993ff59f3dd1388336b
+      size: 1035
