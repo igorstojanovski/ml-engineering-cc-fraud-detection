@@ -1,6 +1,6 @@
 import { Button, Col, Row } from "antd";
-import type { TransactionFormData } from "../types/transaction.ts";
-import { fraudSample, sample1, sample2 } from "../utils/samples.ts";
+import type { TransactionFormData } from "../types/transaction";
+import { fraudSample, sample1, sample2 } from "../utils/samples";
 
 interface SampleButtonsProps {
   onSubmit: (data: TransactionFormData) => void;
