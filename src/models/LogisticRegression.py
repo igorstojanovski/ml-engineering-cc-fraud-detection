@@ -1,51 +1,55 @@
 # ⚙️ Standard library
-import os
 import json
+import os
 import pickle
 import tempfile
-from pathlib import Path
-from multiprocessing import cpu_count
 import warnings
+from multiprocessing import cpu_count
+from pathlib import Path
 
-# 📊 Data and plotting
-import pandas as pd
-import numpy as np
+# 🛠️ Parallelism and memory control
+import joblib
 import matplotlib.pyplot as plt
-import seaborn as sns
-
-# 🤖 Machine learning
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    confusion_matrix,
-    classification_report,
-)
-from sklearn.pipeline import Pipeline
 
 # 🧠 MLflow
 import mlflow
 import mlflow.sklearn
-from mlflow.models.signature import infer_signature
 
-# 🛠️ Parallelism and memory control
-import joblib
+# 📊 Data and plotting
+import pandas as pd
+import seaborn as sns
+from mlflow.models.signature import infer_signature
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
+
+# 🤖 Machine learning
+from sklearn.model_selection import GridSearchCV, train_test_split
 
 # 🧩 Project-specific
-from src.constants import TRAIN_DATASET_FILE_NAME, TARGET_COLUMN, DATA_URI, ML_FLOW_URI, EXPERIMENT_NAME
-from src.libs.libs import *
+from src.constants import (
+    EXPERIMENT_NAME,
+    ML_FLOW_URI,
+    TARGET_COLUMN,
+    TRAIN_DATASET_FILE_NAME,
+)
+from src.libs.libs import SMOTESampler, print_score
 
 # 🔇 Suppress warnings
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 
 # Choose a safe temp folder regardless of OS
 joblib_temp = os.getenv("JOBLIB_TEMP_FOLDER", tempfile.gettempdir())
 
-# Optional: place joblib temp files under a subdir so they don’t mix with other temp files
+# Optional: place joblib temp files under a subdir so they don’t mix with
+# other temp files
 joblib_temp = Path(joblib_temp) / "joblib_tmp"
 joblib_temp.mkdir(parents=True, exist_ok=True)
 
@@ -55,7 +59,7 @@ os.environ["JOBLIB_TEMP_FOLDER"] = str(joblib_temp)
 joblib.parallel_backend("loky")
 
 mlflow.set_tracking_uri(uri=ML_FLOW_URI)
-# start it on console with: 
+# start it on console with:
 # mlflow server --host 127.0.0.1 --port 8080
 
 # MLflow Experiment
@@ -73,34 +77,38 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
     # Apply SMOTE
     smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
     smote_resampled_df = smote_sampler.fit_resample(train_preprocessed)
-    print(f"SMOTE completed for train data")
+    print("SMOTE completed for train data")
 
-    # Select feature columns (independent variables) from the training data to create the training set
+    # Select feature columns (independent variables) from the training data to
+    # create the training set
     X_train_smote = smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
 
-    # Select target columns (dependent variables) from the training data to create the target set 
+    # Select target columns (dependent variables) from the training data to
+    # create the target set
     y_train_smote = smote_resampled_df[TARGET_COLUMN]
 
     # random_state=42 to ensure reproducibility
-    X_train, X_test, y_train, y_test = train_test_split(X_train_smote, y_train_smote, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_train_smote, y_train_smote, test_size=0.3, random_state=42
+    )
     # 1. Logistic Regression
     # Train model
     params_grid = {
-            "penalty": ["l1", "l2", "elasticnet", None],
-            "C": [0.01, 0.1, 1, 10, 100],
-            "solver": ["lbfgs", "saga", "liblinear"],
-            "max_iter": [100, 200, 500],
-        }
+        "penalty": ["l1", "l2", "elasticnet", None],
+        "C": [0.01, 0.1, 1, 10, 100],
+        "solver": ["lbfgs", "saga", "liblinear"],
+        "max_iter": [100, 200, 500],
+    }
 
-    lr_model = LogisticRegression(solver='liblinear')
+    lr_model = LogisticRegression(solver="liblinear")
     safe_jobs = max(1, cpu_count() - 2)
     grid_search = GridSearchCV(
-                    estimator=lr_model,
-                    param_grid=params_grid,
-                    cv=3,
-                    n_jobs=safe_jobs,
-                    scoring='f1',  # Use F1 score for classification optimization
-                )
+        estimator=lr_model,
+        param_grid=params_grid,
+        cv=3,
+        n_jobs=safe_jobs,
+        scoring="f1",  # Use F1 score for classification optimization
+    )
     grid_search.fit(X_train, y_train)
     best_model = grid_search.best_estimator_
 
@@ -122,17 +130,25 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
     mlflow.log_metric("best_cv_score", grid_search.best_score_)
 
     # Step 1: get confusion matrix values
-    conf_matrix = confusion_matrix(y_test, test_prediction)   
+    conf_matrix = confusion_matrix(y_test, test_prediction)
     true_positive = conf_matrix[0][0]
     true_negative = conf_matrix[1][1]
     false_positive = conf_matrix[0][1]
     false_negative = conf_matrix[1][0]
 
-    train_precision_pos_class = precision_score(y_train, train_prediction, pos_label=1, zero_division=0)
-    test_precision_pos_class = precision_score(y_test, test_prediction, pos_label=1, zero_division=0)
+    train_precision_pos_class = precision_score(
+        y_train, train_prediction, pos_label=1, zero_division=0
+    )
+    test_precision_pos_class = precision_score(
+        y_test, test_prediction, pos_label=1, zero_division=0
+    )
 
-    train_recall_pos_class = recall_score(y_train, train_prediction, pos_label=1, zero_division=0)
-    test_recall_pos_class = recall_score(y_test, test_prediction, pos_label=1, zero_division=0)
+    train_recall_pos_class = recall_score(
+        y_train, train_prediction, pos_label=1, zero_division=0
+    )
+    test_recall_pos_class = recall_score(
+        y_test, test_prediction, pos_label=1, zero_division=0
+    )
 
     mlflow.log_metric("true_positive", true_positive)
     mlflow.log_metric("true_negative", true_negative)
@@ -153,9 +169,9 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
         cm_path = os.path.join(tmp_dir, "confusion_matrix.png")
         plt.savefig(cm_path)
         plt.close()
-    # Step 4: Log to MLflow
+        # Step 4: Log to MLflow
         mlflow.log_artifact(cm_path, artifact_path="plots")
-        
+
     mlflow.log_metric("f1", f1)
     mlflow.log_metric("precision", precision)
     mlflow.log_metric("recall", recall)
@@ -165,7 +181,7 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
     mlflow.sklearn.log_model(best_model, signature=signature, artifact_path="model")
 
     mlflow.end_run()
-    
+
 test_score = accuracy_score(y_test, best_model.predict(X_test)) * 100
 train_score = accuracy_score(y_train_smote, best_model.predict(X_train_smote)) * 100
 
@@ -190,7 +206,7 @@ metrics = {
     "recall_train_fraud": float(train_recall_pos_class),
     "recall_test_fraud": float(test_recall_pos_class),
     "train_score": float(train_score),
-    "test_score": float(test_score)
+    "test_score": float(test_score),
 }
 
 with open("outputs/metrics/logistic_metrics.json", "w") as f:

@@ -1,103 +1,124 @@
-import unittest
-import pandas as pd
-import matplotlib.pyplot as plt
 import os
-from sklearn.model_selection import train_test_split
-from src.libs.libs import SMOTESampler
-from src.constants import TARGET_COLUMN, MODEL_URI
+import unittest
+
+import matplotlib.pyplot as plt
 import mlflow
 import mlflow.sklearn
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+from src.constants import MODEL_URI, TARGET_COLUMN
+from src.libs.libs import SMOTESampler
 
 
 class TestFeatureImportance(unittest.TestCase):
     """Test class to analyze and validate feature importance."""
-    
+
     @classmethod
     def setUpClass(cls):
         """Set up test data and model once for all test methods."""
         # Load into DataFrame
         cls.train_preprocessed = pd.read_csv("train_preprocessed.csv")
-        
+
         # Apply SMOTE
         smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
         cls.smote_resampled_df = smote_sampler.fit_resample(cls.train_preprocessed)
-        print(f"SMOTE completed for train data")
-        
+        print("SMOTE completed for train data")
+
         # Select feature columns (independent variables) from the training data
         cls.X_train_smote = cls.smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
-        
+
         # Select target columns (dependent variables) from the training data
         cls.y_train_smote = cls.smote_resampled_df[TARGET_COLUMN]
-        
+
         # Split data into train and test sets
         cls.X_train, cls.X_test, cls.y_train, cls.y_test = train_test_split(
             cls.X_train_smote, cls.y_train_smote, test_size=0.3, random_state=42
         )
-        
+
         # Load the model
         cls.model_uri = MODEL_URI
         cls.model = mlflow.sklearn.load_model(cls.model_uri)
-        
+
         # Get built-in feature importances
         cls.importances = cls.model.feature_importances_
-        
+
         # Create DataFrame
-        cls.feature_importance_df = pd.DataFrame({
-            'Feature': cls.X_train.columns,
-            'Importance': cls.importances
-        }).sort_values(by='Importance', ascending=False)
-        
+        cls.feature_importance_df = pd.DataFrame(
+            {"Feature": cls.X_train.columns, "Importance": cls.importances}
+        ).sort_values(by="Importance", ascending=False)
+
         # Create output directory for plots if it doesn't exist
         os.makedirs("output", exist_ok=True)
-    
+
     def test_feature_importance_exists(self):
         """Test that feature importances exist and are valid."""
         self.assertIsNotNone(self.importances, "Feature importances should not be None")
-        self.assertEqual(len(self.importances), len(self.X_train.columns), 
-                         "Number of feature importances should match number of features")
-        self.assertGreater(sum(self.importances), 0, "Sum of feature importances should be positive")
-        self.assertAlmostEqual(sum(self.importances), 1.0, places=5, 
-                              msg="Sum of feature importances should be approximately 1.0")
-    
+        self.assertEqual(
+            len(self.importances),
+            len(self.X_train.columns),
+            "Number of feature importances should match number of features",
+        )
+        self.assertGreater(
+            sum(self.importances), 0, "Sum of feature importances should be positive"
+        )
+        self.assertAlmostEqual(
+            sum(self.importances),
+            1.0,
+            places=5,
+            msg="Sum of feature importances should be approximately 1.0",
+        )
+
     def test_top_features_have_significant_importance(self):
         """Test that top features have significant importance."""
         # Get top 5 features
         top_features = self.feature_importance_df.head(5)
-        
+
         # Assert that top features have significant importance (e.g., at least 3%)
         for _, row in top_features.iterrows():
             self.assertGreaterEqual(
-                row['Importance'], 0.03,
-                f"Top feature '{row['Feature']}' should have importance of at least 5%"
+                row["Importance"],
+                0.03,
+                f"Top feature '{row['Feature']}' should have importance of at least 5%",
             )
-        
-        # Assert that top 5 features collectively account for significant portion of importance
-        top_importance_sum = top_features['Importance'].sum()
+
+        # Assert that top 5 features collectively account for significant portion
+        # of importance
+        top_importance_sum = top_features["Importance"].sum()
         self.assertGreaterEqual(
-            top_importance_sum, 0.5,
-            f"Top 5 features should account for at least 50% of total importance, got {top_importance_sum:.2f}"
+            top_importance_sum,
+            0.5,
+            f"Top 5 features should account for at least 50% of total importance, "
+            f"got {top_importance_sum:.2f}",
         )
-    
+
     def test_generate_feature_importance_plot(self):
         """Generate feature importance plot and save to file."""
         # Create plot
         plt.figure(figsize=(10, 6))
-        plt.barh(self.feature_importance_df['Feature'], self.feature_importance_df['Importance'])
-        plt.xlabel('Importance')
-        plt.title('Built-in Feature Importance')
+        plt.barh(
+            self.feature_importance_df["Feature"],
+            self.feature_importance_df["Importance"],
+        )
+        plt.xlabel("Importance")
+        plt.title("Built-in Feature Importance")
         plt.gca().invert_yaxis()
-        
+
         # Save plot to file instead of showing it
         plot_path = "output/feature_importance.png"
         plt.savefig(plot_path)
         plt.close()
-        
+
         # Assert that the plot file was created
-        self.assertTrue(os.path.exists(plot_path), f"Plot file {plot_path} should exist")
-        self.assertGreater(os.path.getsize(plot_path), 0, f"Plot file {plot_path} should not be empty")
-        
+        self.assertTrue(
+            os.path.exists(plot_path), f"Plot file {plot_path} should exist"
+        )
+        self.assertGreater(
+            os.path.getsize(plot_path), 0, f"Plot file {plot_path} should not be empty"
+        )
+
         print(f"Feature importance plot saved to {plot_path}")
-        
+
         # Print top 10 features for reference
         print("\nTop 10 Most Important Features:")
         for i, (_, row) in enumerate(self.feature_importance_df.head(10).iterrows(), 1):
