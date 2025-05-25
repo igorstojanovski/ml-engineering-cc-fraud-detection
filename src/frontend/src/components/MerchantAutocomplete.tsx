@@ -1,6 +1,6 @@
 import { AutoComplete, Input, Spin } from "antd";
 import { useEffect, useMemo, useState } from "react";
-import { useGeocoding, type OpenCageResult } from "../hooks/useGeocoding.ts";
+import { useGeocoding, type OpenCageResult } from "../hooks/useGeocoding";
 import debounce from "lodash.debounce";
 
 type MerchantAutocompleteProps = {
@@ -32,8 +32,8 @@ export const MerchantAutocomplete = ({
     meta: r,
   }));
 
-  const handleSelect = (_: string, option: any) => {
-    const result = option.meta as OpenCageResult;
+  const handleSelect = (_: string, option: { meta: OpenCageResult }) => {
+    const result = option.meta;
     onChange?.(result.formatted);
     onSelect?.(result);
   };

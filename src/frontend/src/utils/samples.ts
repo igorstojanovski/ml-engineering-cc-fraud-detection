@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import type { TransactionFormData } from "../types/transaction.ts";
+import type { TransactionFormData } from "../types/transaction";
 
 export const sample1: TransactionFormData = {
   trans_date_trans_time: dayjs("2020-06-21 12:14:25"),

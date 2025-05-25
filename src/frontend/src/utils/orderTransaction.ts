@@ -1,7 +1,7 @@
 import type {
   TransactionData,
   TransactionFormData,
-} from "../types/transaction.ts";
+} from "../types/transaction";
 import dayjs from "dayjs";
 
 const ORDERED_FEATURES = [

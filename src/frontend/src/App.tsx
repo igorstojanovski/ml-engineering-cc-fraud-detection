@@ -2,15 +2,15 @@ import { useEffect } from "react";
 import { App as AntdApp, Layout, Typography } from "antd";
 import { TransactionForm } from "./components/TransactionForm";
 import { ResultCard } from "./components/ResultCard";
-import { useTransaction } from "./hooks/useTransactions.ts";
+import { useTransactions } from "./hooks/useTransactions";
 
 function App() {
-  const { error, isLoading, data, submit, reset } = useTransaction();
+  const { error, isLoading, data, submit, reset } = useTransactions();
   const { message } = AntdApp.useApp();
 
   useEffect(() => {
     error && message.error(error.message);
-  }, [error]);
+  }, [error, message]);
 
   return (
     <Layout style={{ minHeight: "100vh" }}>

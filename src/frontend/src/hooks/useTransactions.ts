@@ -4,7 +4,7 @@ import type {
   TransactionResponse,
 } from "../types/transaction";
 
-export function useTransaction() {
+export function useTransactions() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<void | Error>(undefined);
   const [data, setData] = useState<void | TransactionResponse>(undefined);

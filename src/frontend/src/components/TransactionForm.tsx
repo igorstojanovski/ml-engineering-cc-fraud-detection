@@ -13,14 +13,14 @@ import type {
   TransactionData,
   TransactionFormData,
 } from "../types/transaction";
-import { AddressAutocomplete } from "./AddressAutocomplete.tsx";
-import type { OpenCageResult } from "../hooks/useGeocoding.ts";
-import { MerchantAutocomplete } from "./MerchantAutocomplete.tsx";
-import { SampleButtons } from "./SampleButtons.tsx";
+import { AddressAutocomplete } from "./AddressAutocomplete";
+import type { OpenCageResult } from "../hooks/useGeocoding";
+import { MerchantAutocomplete } from "./MerchantAutocomplete";
+import { SampleButtons } from "./SampleButtons";
 import {
   createOrderedTransaction,
   normalizeTransactionFormData,
-} from "../utils/orderTransaction.ts";
+} from "../utils/orderTransaction";
 
 type TransactionFormProps = {
   onSubmit: (data: TransactionData) => void;
