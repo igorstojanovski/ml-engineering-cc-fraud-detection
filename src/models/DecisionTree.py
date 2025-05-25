@@ -8,17 +8,12 @@ import mlflow.sklearn
 import pandas as pd
 import seaborn as sns
 from mlflow.models.signature import infer_signature
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
-)
+from sklearn.metrics import (accuracy_score, confusion_matrix, f1_score,
+                             precision_score, recall_score)
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.tree import DecisionTreeClassifier
 
-from src.constants import DATA_URI, TARGET_COLUMN, ML_FLOW_URI, EXPERIMENT_NAME
+from src.constants import DATA_URI, EXPERIMENT_NAME, ML_FLOW_URI, TARGET_COLUMN
 from src.libs.libs import SMOTESampler, print_score
 
 warnings.filterwarnings("ignore")

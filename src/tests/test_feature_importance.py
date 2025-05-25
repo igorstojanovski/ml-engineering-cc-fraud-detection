@@ -88,8 +88,8 @@ class TestFeatureImportance(unittest.TestCase):
         self.assertGreaterEqual(
             top_importance_sum,
             0.5,
-            f"Top 5 features should account for at least 50% of total importance, got {
-                top_importance_sum:.2f}",
+            f"Top 5 features should account for at least 50% of total importance, "
+            f"got {top_importance_sum:.2f}",
         )
 
     def test_generate_feature_importance_plot(self):

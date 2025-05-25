@@ -15,10 +15,7 @@ from xgboost import XGBClassifier
 
 import src.constants
 from src.constants import DATA_URI, TARGET_COLUMN
-from src.libs.libs import (
-    SMOTESampler,
-    print_score
-)
+from src.libs.libs import SMOTESampler, print_score
 
 warnings.filterwarnings("ignore")
 

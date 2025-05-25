@@ -127,9 +127,9 @@ class TestOutlierDetection(unittest.TestCase):
         if problematic_features:
             warning_message = "\nFeatures with excessive outliers (>5%):\n"
             for feature, count, percentage, max_zscore in problematic_features:
-                warning_message += f"  - {feature}: {count} outliers ({
-                    percentage:.2f}%), max Z-score: {
-                    max_zscore:.2f}\n"
+                warning_message += f"  - {feature}: {count} "
+                f"outliers ({percentage:.2f}%),"
+                f" max Z-score: {max_zscore:.2f}\n"
 
             print(warning_message)
             print(

@@ -1,18 +1,16 @@
 import unittest
-import pandas as pd
-import numpy as np
+
 import mlflow
 import mlflow.sklearn
-from sklearn.model_selection import train_test_split
+import numpy as np
+import pandas as pd
+from fairlearn.metrics import (MetricFrame, false_positive_rate,
+                               selection_rate, true_positive_rate)
 from sklearn.metrics import f1_score, precision_score, recall_score
+from sklearn.model_selection import train_test_split
+
 from src.constants import MODEL_URI, TARGET_COLUMN
 from src.libs.libs import SMOTESampler
-from fairlearn.metrics import (
-    MetricFrame,
-    selection_rate,
-    true_positive_rate,
-    false_positive_rate,
-)
 
 
 class TestFairnessAndBias(unittest.TestCase):
@@ -118,8 +116,8 @@ class TestFairnessAndBias(unittest.TestCase):
             self.assertLessEqual(
                 precision_disparity,
                 self.max_disparity_threshold,
-                f"Precision disparity for {sensitive_column} exceeds threshold: {
-                    precision_disparity:.4f}",
+                f"Precision disparity for {sensitive_column} "
+                f"exceeds threshold: {precision_disparity:.4f}",
             )
 
             self.assertLessEqual(

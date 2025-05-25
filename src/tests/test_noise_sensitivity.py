@@ -140,12 +140,11 @@ class TestNoiseSensitivity(unittest.TestCase):
         print("\nNoise Sensitivity Test - All Metrics:")
         print("-" * 80)
         print(
-            f"{
-                'Noise':<8} {
-                'F1 Score':<20} {
-                'Accuracy':<20} {
-                    'Precision':<20} {
-                        'Recall':<20}"
+            f"{'Noise':<8} "
+            f"{'F1 Score':<20} "
+            f"{'Accuracy':<20} "
+            f"{'Precision':<20} "
+            f"{'Recall':<20}"
         )
         print(
             f"{

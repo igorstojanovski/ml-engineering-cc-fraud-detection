@@ -6,17 +6,9 @@ import seaborn as sns
 from sklearn.pipeline import Pipeline
 
 from src import constants
-from src.libs.libs import (
-    ChangeDataType,
-    DateTimeFeatures,
-    AgeFeature,
-    CalculateDistance,
-    BinCityPopulation,
-    YeoJohnsonTransformer,
-    DropColumns,
-    LabelEncoding,
-    ScaleFeatures,
-)
+from src.libs.libs import (AgeFeature, BinCityPopulation, CalculateDistance,
+                           ChangeDataType, DateTimeFeatures, DropColumns,
+                           LabelEncoding, ScaleFeatures, YeoJohnsonTransformer)
 
 
 class FraudDetectionConfig:
