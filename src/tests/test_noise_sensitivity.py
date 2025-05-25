@@ -202,8 +202,10 @@ class TestNoiseSensitivity(unittest.TestCase):
         if failed_tests:
             failure_message = "\nModel performance degraded below acceptable levels:\n"
             for noise, metric, percentage in failed_tests:
-                failure_message += f"  - Noise level {noise}: {metric} dropped to {
-                    percentage:.1f}% of baseline\n"
+                failure_message += (
+                    f"  - Noise level {noise}: {metric} "
+                    f"dropped to {percentage:.1f}% of baseline\n"
+                )
 
             self.fail(failure_message)
 

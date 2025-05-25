@@ -171,9 +171,8 @@ class TestOutlierDetection(unittest.TestCase):
                         percentage,
                         max_acceptable_percentage,
                         f"Excessive outliers detected in feature '{feature}': "
-                        f"{outliers} outliers ({
-                            percentage:.2f}%), max Z-score: {
-                            max_zscore:.2f}",
+                        f"{outliers} outliers ({percentage:.2f}%), "
+                        f"max Z-score: {max_zscore:.2f}",
                     )
                 except Exception as e:
                     self.fail(f"Error testing feature '{feature}': {str(e)}")
