@@ -11,7 +11,6 @@ import joblib
 import matplotlib.pyplot as plt
 
 # 🧠 MLflow
-import mlflow
 import mlflow.sklearn
 
 # 📊 Data and plotting
@@ -34,7 +33,7 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 # 🧩 Project-specific
 from src.constants import (
     EXPERIMENT_NAME,
-    ML_FLOW_URI,
+    MLFLOW_URI,
     TARGET_COLUMN,
     TRAIN_DATASET_FILE_NAME,
 )
@@ -57,7 +56,7 @@ os.environ["JOBLIB_TEMP_FOLDER"] = str(joblib_temp)
 # Use parallel backend
 joblib.parallel_backend("loky")
 
-mlflow.set_tracking_uri(uri=ML_FLOW_URI)
+mlflow.set_tracking_uri(uri=MLFLOW_URI)
 # start it on console with:
 # mlflow server --host 127.0.0.1 --port 8080
 
@@ -107,7 +106,7 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
         cv=3,
         n_jobs=safe_jobs,
         scoring="f1",  # Use F1 score for classification optimization
-        verbose=2
+        verbose=2,
     )
     grid_search.fit(X_train, y_train)
     best_model = grid_search.best_estimator_
@@ -181,10 +180,7 @@ with mlflow.start_run(run_name="logistic_regression_experiment") as run:
     mlflow.sklearn.log_model(best_model, signature=signature, artifact_path="model")
 
     with open("outputs/models/logistic_model_run_metadata.json", "w") as f:
-        json.dump({
-            "run_id": run.info.run_id,
-            "artifact_path": "model"
-        }, f)
+        json.dump({"run_id": run.info.run_id, "artifact_path": "model"}, f)
     mlflow.end_run()
 
 test_score = accuracy_score(y_test, best_model.predict(X_test)) * 100

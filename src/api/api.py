@@ -6,14 +6,14 @@ import numpy as np
 import pandas as pd
 from flask import Flask, jsonify, request
 
-from src.constants import ML_FLOW_URI
+from src.constants import MLFLOW_URI, MLFLOW_MODEL_URI
 from src.libs.preprocessorLib import FraudDetectionConfig, create_preprocessing_pipeline
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Set MLflow tracking URI
-mlflow.set_tracking_uri(uri=ML_FLOW_URI)
+mlflow.set_tracking_uri(uri=MLFLOW_URI)
 
 # Load the model at startup
 
@@ -22,7 +22,7 @@ def load_model():
     """
     Load the best model from MLflow model registry
     """
-    model_uri = "models:/credit-fraud-logistic-regression/Production"
+    model_uri = MLFLOW_MODEL_URI
     model = mlflow.sklearn.load_model(model_uri)
     return model
 

@@ -3,7 +3,6 @@ import tempfile
 import warnings
 
 import matplotlib.pyplot as plt
-import mlflow
 import mlflow.sklearn
 import pandas as pd
 import seaborn as sns
@@ -18,20 +17,26 @@ from sklearn.metrics import (
 from sklearn.model_selection import GridSearchCV, train_test_split
 from xgboost import XGBClassifier
 
-import src.constants
-from src.constants import DATA_URI, TARGET_COLUMN
+from src.constants import (
+    TRAIN_DATASET_FILE_NAME,
+    TARGET_COLUMN,
+    MLFLOW_URI,
+    EXPERIMENT_NAME,
+)
 from src.libs.libs import SMOTESampler, print_score
 
 warnings.filterwarnings("ignore")
 
 
-mlflow.set_tracking_uri(uri=src.constants.ML_FLOW_URI)
+mlflow.set_tracking_uri(uri=MLFLOW_URI)
 
-mlflow.set_experiment(src.constants.EXPERIMENT_NAME)
+mlflow.set_experiment(EXPERIMENT_NAME)
 # Load the dataset
 with mlflow.start_run(run_name="Xgboost_experiment") as run:
     # Load the artifact from the current run or another run
-    mlflow.artifacts.download_artifacts(DATA_URI, dst_path="./downloaded_artifacts")
+    mlflow.artifacts.download_artifacts(
+        TRAIN_DATASET_FILE_NAME, dst_path="./downloaded_artifacts"
+    )
 
     # Load into DataFrame
     train_preprocessed = pd.read_csv("train_preprocessed.csv")
