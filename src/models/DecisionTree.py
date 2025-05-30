@@ -1,4 +1,6 @@
+import json
 import os
+import sys
 import tempfile
 import warnings
 
@@ -7,101 +9,89 @@ import mlflow.sklearn
 import pandas as pd
 import seaborn as sns
 from mlflow.models.signature import infer_signature
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
-)
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.tree import DecisionTreeClassifier
 
+# Add the project root to the path to ensure correct imports
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
 from src.constants import (
-    TRAIN_DATASET_FILE_NAME,
     EXPERIMENT_NAME,
     MLFLOW_URI,
     TARGET_COLUMN,
+    TRAIN_DATASET_FILE_NAME,
 )
-from src.libs.libs import SMOTESampler, print_score
+from src.libs.libs import SMOTESampler
 
 warnings.filterwarnings("ignore")
+
+# Load into DataFrame
+train_preprocessed = pd.read_csv(TRAIN_DATASET_FILE_NAME)
+
+# Apply SMOTE
+smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
+smote_resampled_df = smote_sampler.fit_resample(train_preprocessed)
+print("SMOTE completed for train data")
+
+# Select feature columns (independent variables) from the training data to
+# create the training set
+X_train_smote = smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
+
+# Select target columns (dependent variables) from the training data to
+# create the target set
+y_train_smote = smote_resampled_df[TARGET_COLUMN]
+# random_state=42 to ensure reproducibility
+X_train, X_test, y_train, y_test = train_test_split(
+    X_train_smote, y_train_smote, test_size=0.3, random_state=42
+)
+
+# Train model
+dt_model = DecisionTreeClassifier(random_state=42)
+
+# Define the hyperparameter grid
+param_grid = {
+    "criterion": ["gini", "entropy"],
+    "max_depth": [20, 30],
+    "min_samples_split": [2, 5],
+    "min_samples_leaf": [1, 2],
+    "max_features": ["sqrt"],
+}
+
+# Create the grid search object
+grid_search = GridSearchCV(
+    estimator=dt_model,
+    param_grid=param_grid,
+    cv=3,  # 3-fold cross-validation
+    scoring="f1",  # or 'f1', 'roc_auc', etc.
+    n_jobs=-1,  # Use all processors
+    verbose=0,
+)
+
+# Fit to your training data
+# training
+grid_search.fit(X_train, y_train)
+best_model = grid_search.best_estimator_
+
+# prediction
+test_prediction = best_model.predict(X_test)
+train_prediction = best_model.predict(X_train)
+
+signature = infer_signature(X_test, test_prediction)
 
 mlflow.set_tracking_uri(uri=MLFLOW_URI)
 mlflow.set_experiment(EXPERIMENT_NAME)
 
-warnings.filterwarnings("ignore")
-
-
-mlflow.set_tracking_uri(uri=MLFLOW_URI)
-mlflow.set_experiment(EXPERIMENT_NAME)
-# Load the dataset
 with mlflow.start_run(run_name="decision_tree_experiment") as run:
-    mlflow.artifacts.download_artifacts(
-        TRAIN_DATASET_FILE_NAME, dst_path="./downloaded_artifacts"
-    )
-
-    # Load into DataFrame
-    train_preprocessed = pd.read_csv("train_preprocessed.csv")
-
-    # Apply SMOTE
-    smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
-    smote_resampled_df = smote_sampler.fit_resample(train_preprocessed)
-    print("SMOTE completed for train data")
-
-    # Select feature columns (independent variables) from the training data to
-    # create the training set
-    X_train_smote = smote_resampled_df.drop(columns=TARGET_COLUMN, axis=1)
-
-    # Select target columns (dependent variables) from the training data to
-    # create the target set
-    y_train_smote = smote_resampled_df[TARGET_COLUMN]
-    # random_state=42 to ensure reproducibility
-    X_train, X_test, y_train, y_test = train_test_split(
-        X_train_smote, y_train_smote, test_size=0.3, random_state=42
-    )
-
-    # Train model
-    dt_model = DecisionTreeClassifier(random_state=42)
-
-    # Define the hyperparameter grid
-    param_grid = {
-        "criterion": ["gini", "entropy"],
-        "max_depth": [20, 30],
-        "min_samples_split": [2, 5],
-        "min_samples_leaf": [1, 2],
-        "max_features": ["sqrt"],
-    }
-
-    # Create the grid search object
-    grid_search = GridSearchCV(
-        estimator=dt_model,
-        param_grid=param_grid,
-        cv=3,  # 5-fold cross-validation
-        scoring="f1",  # or 'f1', 'roc_auc', etc.
-        n_jobs=-1,  # Use all processors
-        verbose=0,
-    )
-
-    # Fit to your training data
-    # training
-    grid_search.fit(X_train, y_train)
-    best_model = grid_search.best_estimator_
-
-    # prediction
-    test_prediction = best_model.predict(X_test)
-    train_prediction = best_model.predict(X_train)
-
-    signature = infer_signature(X_test, test_prediction)
-
-    # Evaluate
-    f1 = f1_score(y_test, test_prediction)
-    precision = precision_score(y_test, test_prediction)
-    recall = recall_score(y_test, test_prediction)
-    acc = accuracy_score(y_test, test_prediction)
-
     mlflow.log_params(grid_search.best_params_)  # Logs best combo
     mlflow.log_metric("best_cv_score", grid_search.best_score_)
+
+    report = classification_report(
+        y_test, test_prediction, zero_division=0, output_dict=True
+    )
+    print(classification_report(y_test, test_prediction, zero_division=0))
 
     # Step 1: get confusion matrix values
     conf_matrix = confusion_matrix(y_test, test_prediction)
@@ -114,23 +104,6 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
     mlflow.log_metric("true_negative", true_negative)
     mlflow.log_metric("false_positive", false_positive)
     mlflow.log_metric("false_negative", false_negative)
-
-    train_precision_pos_class = precision_score(
-        y_train, train_prediction, pos_label=1, zero_division=0
-    )
-    test_precision_pos_class = precision_score(
-        y_test, test_prediction, pos_label=1, zero_division=0
-    )
-
-    train_recall_pos_class = recall_score(
-        y_train, train_prediction, pos_label=1, zero_division=0
-    )
-    test_recall_pos_class = recall_score(
-        y_test, test_prediction, pos_label=1, zero_division=0
-    )
-
-    mlflow.log_metric("recall on class fraud for train dataset", train_recall_pos_class)
-    mlflow.log_metric("recall on class fraud for test dataset", test_recall_pos_class)
 
     # Step 2: Plot it using seaborn
     plt.figure(figsize=(6, 4))
@@ -147,19 +120,25 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
         # Step 4: Log to MLflow
         mlflow.log_artifact(cm_path, artifact_path="plots")
 
-    mlflow.log_metric("f1", f1)
-    mlflow.log_metric("precision", precision)
-    mlflow.log_metric("recall", recall)
-    mlflow.log_metric("accuracy", acc)
-
     # Log model
     mlflow.sklearn.log_model(
         best_model, signature=signature, input_example=X_train, artifact_path="model"
     )
+    # Log each class's metrics
+    for label, metrics in report.items():
+        # Skip 'accuracy', 'macro avg', 'weighted avg' for this loop
+        if label in ["accuracy", "macro avg", "weighted avg"]:
+            continue
+        for metric_name, value in metrics.items():
+            mlflow.log_metric(f"{label}_{metric_name}", value)
+
+    mlflow.log_metric("accuracy", report["accuracy"])
+    for avg_type in ["macro avg", "weighted avg"]:
+        for metric_name, value in report[avg_type].items():
+            mlflow.log_metric(f"{avg_type.replace(' ', '_')}_{metric_name}", value)
+
+    with open("classification_report.json", "w") as f:
+        json.dump(report, f, indent=4)
+    mlflow.log_artifact("classification_report.json")
+
     mlflow.end_run()
-
-test_score = accuracy_score(y_test, best_model.predict(X_test)) * 100
-train_score = accuracy_score(y_train_smote, best_model.predict(X_train_smote)) * 100
-
-print_score(best_model, X_train_smote, y_train_smote, X_test, y_test, train=True)
-print_score(best_model, X_train_smote, y_train_smote, X_test, y_test, train=False)
