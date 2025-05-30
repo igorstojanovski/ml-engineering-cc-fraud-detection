@@ -11,7 +11,7 @@ COPY ./src ./src
 
 # Set environment variables
 ENV PYTHONPATH=/app
-ENV ML_FLOW_URI=http://mlflow:5000
+ENV MLFLOW_URI=http://mlflow:5000
 
 # Expose port for API
 EXPOSE 5001

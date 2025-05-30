@@ -28,7 +28,7 @@ class FraudDetectionConfig:
         output_filename,
         context,
         name,
-        mlflow_tracking_uri=constants.ML_FLOW_URI,
+        mlflow_tracking_uri=constants.MLFLOW_URI,
         experiment_name=constants.EXPERIMENT_NAME,
     ):
         self.ds_url = ds_url

@@ -3,7 +3,6 @@ import tempfile
 import warnings
 
 import matplotlib.pyplot as plt
-import mlflow
 import mlflow.sklearn
 import pandas as pd
 import seaborn as sns
@@ -18,22 +17,29 @@ from sklearn.metrics import (
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.tree import DecisionTreeClassifier
 
-from src.constants import DATA_URI, EXPERIMENT_NAME, ML_FLOW_URI, TARGET_COLUMN
+from src.constants import (
+    TRAIN_DATASET_FILE_NAME,
+    EXPERIMENT_NAME,
+    MLFLOW_URI,
+    TARGET_COLUMN,
+)
 from src.libs.libs import SMOTESampler, print_score
 
 warnings.filterwarnings("ignore")
 
-mlflow.set_tracking_uri(uri=ML_FLOW_URI)
+mlflow.set_tracking_uri(uri=MLFLOW_URI)
 mlflow.set_experiment(EXPERIMENT_NAME)
 
 warnings.filterwarnings("ignore")
 
 
-mlflow.set_tracking_uri(uri=ML_FLOW_URI)
+mlflow.set_tracking_uri(uri=MLFLOW_URI)
 mlflow.set_experiment(EXPERIMENT_NAME)
 # Load the dataset
 with mlflow.start_run(run_name="decision_tree_experiment") as run:
-    mlflow.artifacts.download_artifacts(DATA_URI, dst_path="./downloaded_artifacts")
+    mlflow.artifacts.download_artifacts(
+        TRAIN_DATASET_FILE_NAME, dst_path="./downloaded_artifacts"
+    )
 
     # Load into DataFrame
     train_preprocessed = pd.read_csv("train_preprocessed.csv")

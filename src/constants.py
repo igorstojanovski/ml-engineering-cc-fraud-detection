@@ -1,25 +1,24 @@
 from pathlib import Path
+from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+load_dotenv(dotenv_path=PROJECT_ROOT / ".env")
+
+import os  # noqa: E402
 
 TRAIN_DATA_DIR = PROJECT_ROOT / "data" / "training"
 PROCESSED_DATA_DIR = PROJECT_ROOT / "outputs" / "preprocessed"
-
 
 EXPERIMENT_NAME = "Fraud Detection in Credit Card Transaction"
 TRAIN_DATASET_FILE_NAME = PROCESSED_DATA_DIR / "train_preprocessed.csv"
 TRAIN_DATASET_URL = TRAIN_DATA_DIR / "fraudTrain.csv"
 VALIDATION_DATASET_URL = TRAIN_DATA_DIR / "fraudTest.csv"
-BEST_MODEL_RUN_ID = "359dfc339a5541ba830ade905ec0b27b"
-BEST_MODEL_NAME = "Decision Tree"
 
 VALIDATION_DATASET_FILE_NAME = PROCESSED_DATA_DIR / "validation_preprocessed.csv"
 
-TRAINING_RUN_NAME = "training"
-VALIDATION_RUN_NAME = "validation"
-
-DATA_URI = "mlartifacts/282047854241216555/d3237dabc0064c7e97698fa56adba180/artifacts/train_preprocessed.csv"  # noqa: E501
-
 TARGET_COLUMN = "is_fraud"
 
-ML_FLOW_URI = "http://127.0.0.1:5000/"
+MLFLOW_URI = os.environ.get("MLFLOW_URI", "http://127.0.0.1:5000/")
+MLFLOW_MODEL_URI = os.environ.get(
+    "MLFLOW_MODEL_URI", "models:/credit-fraud-logistic-regression/Production"
+)

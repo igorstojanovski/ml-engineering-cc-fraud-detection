@@ -1,6 +1,5 @@
 import json
 import mlflow
-from mlflow.tracking import MlflowClient
 
 mlflow.set_tracking_uri("http://127.0.0.1:5000")
 
@@ -19,18 +18,13 @@ model_uri = f"runs:/{run_id}/{artifact_path}"
 result = mlflow.register_model(model_uri=model_uri, name=MODEL_NAME)
 
 # Promote it
-client = MlflowClient()
+client = mlflow.tracking.MlflowClient()
 client.transition_model_version_stage(
-    name=MODEL_NAME,
-    version=result.version,
-    stage="Production",
-    archive_existing_versions=True
+    name=MODEL_NAME, version=result.version, stage=STAGE, archive_existing_versions=True
 )
 
 client.set_registered_model_alias(
-    name=MODEL_NAME,
-    alias="latest",
-    version=result.version
+    name=MODEL_NAME, alias="latest", version=result.version
 )
 
 print(f"✅ Registered and promoted model version {result.version} to {STAGE}")
