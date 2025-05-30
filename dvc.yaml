@@ -13,6 +13,11 @@ stages:
     - src/models/LogisticRegression.py
     outs:
     - outputs/models/logistic_model.pkl
+    - outputs/models/logistic_model_run_metadata.json
     metrics:
     - outputs/metrics/logistic_metrics.json:
         cache: false
+  promote_model:
+    cmd: PYTHONPATH=. python src/models/PromoteLogisticRegression.py
+    deps:
+    - outputs/models/logistic_model_run_metadata.json
