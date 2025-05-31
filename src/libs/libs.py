@@ -1,11 +1,10 @@
 import numpy as np
 import pandas as pd
-from imblearn.combine import SMOTETomek
-from imblearn.over_sampling import ADASYN, SMOTE
-from imblearn.under_sampling import TomekLinks
+from imblearn.over_sampling import SMOTE
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler, PowerTransformer
+
+random_state = 42
 
 
 class ChangeDataType(BaseEstimator, TransformerMixin):
@@ -211,77 +210,3 @@ class SMOTESampler:
         y = df[self.target_column]
         X_resampled, y_resampled = self.sampler.fit_resample(X, y)
         return X_resampled.assign(**{self.target_column: y_resampled})
-
-
-# Class to oversample the minority class using the Adaptive Synthetic (ADASYN) method
-class ADASYN_Sampler:
-    def __init__(self, target_column):
-        self.target_column = target_column
-        self.sampler = ADASYN(random_state=random_state)
-
-    # Fits the sampler and resamples the data to balance the target column
-    def fit_resample(self, df):
-        X = df.drop(columns=[self.target_column])
-        y = df[self.target_column]
-        X_resampled, y_resampled = self.sampler.fit_resample(X, y)
-        return X_resampled.assign(**{self.target_column: y_resampled})
-
-
-# Class to reduce data imbalance by removing Tomek Links (overlapping
-# majority samples near minority samples)
-class TomekLinksSampler:
-    def __init__(self, target_column):
-        self.target_column = target_column
-        self.sampler = TomekLinks()
-
-    # Fits the sampler and resamples the data to reduce Tomek Links
-    def fit_resample(self, df):
-        X = df.drop(columns=[self.target_column])
-        y = df[self.target_column]
-        X_resampled, y_resampled = self.sampler.fit_resample(X, y)
-        return X_resampled.assign(**{self.target_column: y_resampled})
-
-
-# Class to combine SMOTE oversampling and Tomek Links removal for handling
-# imbalanced data
-class SMOTETomekSampler:
-    def __init__(self, target_column):
-        self.target_column = target_column
-        self.sampler = SMOTETomek(random_state=random_state)
-
-    # Fits the sampler and resamples the data using a combination of SMOTE and
-    # Tomek Links
-    def fit_resample(self, df):
-        X = df.drop(columns=[self.target_column])
-        y = df[self.target_column]
-        X_resampled, y_resampled = self.sampler.fit_resample(X, y)
-        return X_resampled.assign(**{self.target_column: y_resampled})
-
-
-random_state = 15
-
-# 1. Logistic Regression
-
-
-def print_score(clf, X_train, y_train, X_test, y_test, train=True):
-    if train:
-        pred = clf.predict(X_train)
-        clf_report = pd.DataFrame(
-            classification_report(y_train, pred, output_dict=True)
-        )
-        print("Train Result:\n================================================")
-        print(f"Accuracy Score: {accuracy_score(y_train, pred) * 100:.2f}%")
-        print("_______________________________________________")
-        print(f"CLASSIFICATION REPORT:\n{clf_report}")
-        print("_______________________________________________")
-        print(f"Confusion Matrix: \n {confusion_matrix(y_train, pred)}\n")
-
-    elif not train:
-        pred = clf.predict(X_test)
-        clf_report = pd.DataFrame(classification_report(y_test, pred, output_dict=True))
-        print("Test Result:\n================================================")
-        print(f"Accuracy Score: {accuracy_score(y_test, pred) * 100:.2f}%")
-        print("_______________________________________________")
-        print(f"CLASSIFICATION REPORT:\n{clf_report}")
-        print("_______________________________________________")
-        print(f"Confusion Matrix: \n {confusion_matrix(y_test, pred)}\n")
