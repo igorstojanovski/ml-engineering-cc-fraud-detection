@@ -2,7 +2,6 @@ import os
 
 import mlflow
 import mlflow.sklearn
-import numpy as np
 import pandas as pd
 from flask import Flask, jsonify, request
 
@@ -227,23 +226,6 @@ def preprocess_data(df):
     except Exception as e:
         print(f"Error in preprocessing: {e}")
         raise
-
-
-def haversine_distance(lat1, lon1, lat2, lon2):
-    """
-    Calculate the great circle distance between two points
-    on the earth (specified in decimal degrees)
-    """
-    # Convert decimal degrees to radians
-    lat1, lon1, lat2, lon2 = map(np.radians, [lat1, lon1, lat2, lon2])
-
-    # Haversine formula
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
-    a = np.sin(dlat / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2) ** 2
-    c = 2 * np.arcsin(np.sqrt(a))
-    r = 6371  # Radius of earth in kilometers
-    return c * r
 
 
 if __name__ == "__main__":
