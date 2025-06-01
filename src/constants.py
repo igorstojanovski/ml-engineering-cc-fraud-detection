@@ -20,5 +20,5 @@ TARGET_COLUMN = "is_fraud"
 
 # defaulted to model it is the name of the model after deployment
 MODEL_NAME = os.environ.get("MODEL_NAME", "model")
-LOCAL_MODEL_PATH = os.environ.get("LOCAL_MODEL_PATH", "outputs/models/model.pkl")
+LOCAL_MODEL_PATH = os.environ.get("LOCAL_MODEL_PATH", "outputs/models/logistic_model.pkl")
 MLFLOW_URI = os.environ.get("MLFLOW_URI", "http://127.0.0.1:5000/")
