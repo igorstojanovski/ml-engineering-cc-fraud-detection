@@ -13,7 +13,7 @@ from fairlearn.metrics import (
 from sklearn.metrics import f1_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 
-from src.constants import MODEL_URI, TARGET_COLUMN
+from src.constants import MODEL_URI, TARGET_COLUMN, TRAIN_DATASET_FILE_NAME
 from src.libs.libs import SMOTESampler
 
 
@@ -28,7 +28,7 @@ class TestFairnessAndBias(unittest.TestCase):
         cls.model = mlflow.sklearn.load_model(cls.model_uri)
 
         # Load into DataFrame
-        cls.train_preprocessed = pd.read_csv("train_preprocessed.csv")
+        cls.train_preprocessed = pd.read_csv(TRAIN_DATASET_FILE_NAME)
 
         # Apply SMOTE
         smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
