@@ -82,7 +82,7 @@ services:
       - ./:/app
     environment:
       MLFLOW_URI: ${MLFLOW_URI}
-      MLFLOW_MODEL_URI: ${MLFLOW_MODEL_URI}
+      MODEL_NAME: ${MODEL_NAME}
     depends_on:
       - mlflow
     networks:

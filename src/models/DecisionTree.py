@@ -12,6 +12,7 @@ from mlflow.models.signature import infer_signature
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.tree import DecisionTreeClassifier
+import pickle
 
 # Add the project root to the path to ensure correct imports
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -121,9 +122,7 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
         mlflow.log_artifact(cm_path, artifact_path="plots")
 
     # Log model
-    mlflow.sklearn.log_model(
-        best_model, signature=signature, input_example=X_train, artifact_path="model"
-    )
+    mlflow.sklearn.log_model(best_model, signature=signature, artifact_path="model")
     # Log each class's metrics
     for label, metrics in report.items():
         # Skip 'accuracy', 'macro avg', 'weighted avg' for this loop
@@ -140,5 +139,11 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
     with open("classification_report.json", "w") as f:
         json.dump(report, f, indent=4)
     mlflow.log_artifact("classification_report.json")
-
     mlflow.end_run()
+
+    with open("outputs/models/decision_tree_run_metadata.json", "w") as f:
+        json.dump({"run_id": run.info.run_id, "artifact_path": "model"}, f)
+
+    # Save the trained model as a .pkl file for DVC to track
+    with open("outputs/models/decision_tree_model.pkl", "wb") as f:
+        pickle.dump(best_model, f)

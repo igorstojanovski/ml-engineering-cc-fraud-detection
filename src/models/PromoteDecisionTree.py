@@ -17,7 +17,7 @@ client = MlflowClient()
 
 model_name = MODEL_NAME
 
-with open("outputs/models/logistic_model_run_metadata.json") as f:
+with open("outputs/models/decision_tree_run_metadata.json") as f:
     meta = json.load(f)
 
 run_id = meta["run_id"]

@@ -12,6 +12,7 @@ from mlflow.models.signature import infer_signature
 from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import GridSearchCV, train_test_split
 from xgboost import XGBClassifier
+import pickle
 
 # Add the project root to the path to ensure correct imports
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -139,5 +140,11 @@ with mlflow.start_run(run_name="Xgboost_experiment") as run:
     with open("classification_report.json", "w") as f:
         json.dump(report, f, indent=4)
     mlflow.log_artifact("classification_report.json")
-
     mlflow.end_run()
+
+    with open("outputs/models/xgboost_run_metadata.json", "w") as f:
+        json.dump({"run_id": run.info.run_id, "artifact_path": "model"}, f)
+
+    # Save the trained model as a .pkl file for DVC to track
+    with open("outputs/models/xgboost_model.pkl", "wb") as f:
+        pickle.dump(best_model, f)
