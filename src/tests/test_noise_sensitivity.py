@@ -7,7 +7,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 
-from src.constants import MODEL_URI, TARGET_COLUMN
+from src.constants import MODEL_URI, TARGET_COLUMN, TRAIN_DATASET_FILE_NAME
 from src.libs.libs import SMOTESampler
 
 
@@ -21,7 +21,7 @@ class TestNoiseSensitivity(unittest.TestCase):
         cls.model = cls.load_model()
 
         # Load into DataFrame
-        cls.train_preprocessed = pd.read_csv("train_preprocessed.csv")
+        cls.train_preprocessed = pd.read_csv(TRAIN_DATASET_FILE_NAME)
 
         # Apply SMOTE
         smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)

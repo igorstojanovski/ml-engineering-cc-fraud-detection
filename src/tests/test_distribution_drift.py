@@ -4,7 +4,7 @@ import pandas as pd
 from scipy.stats import ks_2samp
 from sklearn.model_selection import train_test_split
 
-from src.constants import TARGET_COLUMN
+from src.constants import TARGET_COLUMN, TRAIN_DATASET_FILE_NAME
 from src.libs.libs import SMOTESampler
 
 # Data Distribution Checks
@@ -20,7 +20,7 @@ class TestDistributionDrift(unittest.TestCase):
     def setUpClass(cls):
         """Set up test data once for all test methods."""
         # Load into DataFrame
-        cls.train_preprocessed = pd.read_csv("train_preprocessed.csv")
+        cls.train_preprocessed = pd.read_csv(TRAIN_DATASET_FILE_NAME)
 
         # Apply SMOTE
         smote_sampler = SMOTESampler(target_column=TARGET_COLUMN)
