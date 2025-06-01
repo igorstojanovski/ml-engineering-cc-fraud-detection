@@ -19,4 +19,4 @@ VALIDATION_DATASET_FILE_NAME = PROCESSED_DATA_DIR / "validation_preprocessed.csv
 TARGET_COLUMN = "is_fraud"
 
 MODEL_NAME = "model"  # defaulted to model it is the name of the model after deployment
-MLFLOW_URI = os.environ.get("MLFLOW_URI", "http://127.0.0.1:5000/")
+MLFLOW_URI = os.environ.get("MLFLOW_TRACKING_URI", "http://65.109.129.79")
