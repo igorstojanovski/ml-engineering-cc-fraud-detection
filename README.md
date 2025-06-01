@@ -1,245 +1,133 @@
-# fraud-detection-ml-engineering
-# fraud-detection-ml-engineering
-A repository for the PA2595 Machine Learning Engineering BTH Course
+# Credit Card Fraud Detection ML Engineering Project
 
-## API Usage
+This project implements a machine learning system for credit card fraud detection with a complete MLOps pipeline including model training, evaluation, and deployment.
 
-The project includes a REST API for making fraud predictions using the trained model.
+## Project Overview
 
-### Starting the API Server
+The system uses machine learning models to detect potentially fraudulent credit card transactions. It includes:
 
-```bash
-python -m src.api.run_api
-```
-
-The API will be available at http://localhost:5001
-
-### API Endpoints
-
-#### Health Check
-```
-GET /health
-```
-Returns the health status of the API and whether the model is loaded.
-
-#### Make Prediction
-```
-POST /predict
-```
-
-The API supports both raw transaction data and preprocessed data.
-
-##### Using Raw Transaction Data
-
-Example request body for a single transaction:
-```json
-{
-  "transaction_data": {
-    "cc_num": "2703186189652095",
-    "merchant": "fraud_Rippin, Kub and Mann",
-    "category": "misc_net",
-    "amt": 4.97,
-    "first": "John",
-    "last": "Doe",
-    "gender": "F",
-    "street": "123 Main St",
-    "city": "Cityville",
-    "state": "NY",
-    "zip": "12345",
-    "lat": 42.123,
-    "long": -71.456,
-    "city_pop": 12345,
-    "job": "Accountant",
-    "dob": "1980-01-01",
-    "trans_num": "2d51696d09e0b108d7e5f9490c8abf27",
-    "unix_time": 1325376018,
-    "merch_lat": 42.987,
-    "merch_long": -71.123
-  }
-}
-```
-
-Example response:
-```json
-{
-  "prediction": 0,
-  "is_fraud": false,
-  "fraud_probability": 0.023,
-  "transaction_id": "2d51696d09e0b108d7e5f9490c8abf27"
-}
-```
-
-The API also supports batch predictions by sending multiple transactions:
-```json
-{
-  "transactions": [
-    {
-      "cc_num": "2703186189652095",
-      "merchant": "fraud_Rippin, Kub and Mann",
-      "category": "misc_net",
-      "amt": 4.97,
-      "first": "John",
-      "last": "Doe",
-      "gender": "F",
-      "street": "123 Main St",
-      "city": "Cityville",
-      "state": "NY",
-      "zip": "12345",
-      "lat": 42.123,
-      "long": -71.456,
-      "city_pop": 12345,
-      "job": "Accountant",
-      "dob": "1980-01-01",
-      "trans_num": "2d51696d09e0b108d7e5f9490c8abf27",
-      "unix_time": 1325376018,
-      "merch_lat": 42.987,
-      "merch_long": -71.123
-    },
-    {
-      "cc_num": "2703186189652096",
-      "merchant": "fraud_Rippin, Kub and Mann",
-      "category": "misc_net",
-      "amt": 500.00,
-      "first": "Jane",
-      "last": "Smith",
-      "gender": "F",
-      "street": "456 Oak St",
-      "city": "Townsville",
-      "state": "CA",
-      "zip": "90210",
-      "lat": 34.123,
-      "long": -118.456,
-      "city_pop": 3900000,
-      "job": "Engineer",
-      "dob": "1985-05-15",
-      "trans_num": "3e51696d09e0b108d7e5f9490c8abf28",
-      "unix_time": 1325376020,
-      "merch_lat": 34.987,
-      "merch_long": -118.123
-    }
-  ]
-}
-```
-
-##### Using Preprocessed Data
-
-Example request body for a single transaction:
-```json
-{
-  "transaction_data": {
-    "category": 0.7692307692307693,
-    "gender": 1,
-    "transaction_hour": 0.5217391304347826,
-    "transaction_month": 0.0,
-    "is_weekend": 1,
-    "day_of_week": 0.5,
-    "part_of_day": 0.0,
-    "age": 0.4567901234567901,
-    "distance": 0.16205439081001802,
-    "city_pop_bin": 0.0,
-    "amt_yeo_johnson": 0.043759851582931636
-  }
-}
-```
-
-Example response:
-```json
-{
-  "prediction": 0,
-  "is_fraud": false,
-  "fraud_probability": 0.023,
-  "transaction_id": "unknown"
-}
-```
-
-The API also supports batch predictions by sending multiple transactions:
-```json
-{
-  "transactions": [
-    {
-      "category": 0.7692307692307693,
-      "gender": 1,
-      "transaction_hour": 0.5217391304347826,
-      "transaction_month": 0.0,
-      "is_weekend": 1,
-      "day_of_week": 0.5,
-      "part_of_day": 0.0,
-      "age": 0.4567901234567901,
-      "distance": 0.16205439081001802,
-      "city_pop_bin": 0.0,
-      "amt_yeo_johnson": 0.043759851582931636
-    },
-    {
-      "category": 0.7692307692307693,
-      "gender": 0,
-      "transaction_hour": 0.5217391304347826,
-      "transaction_month": 0.0,
-      "is_weekend": 1,
-      "day_of_week": 0.5,
-      "part_of_day": 0.0,
-      "age": 0.18518518518518517,
-      "distance": 0.6949745858768592,
-      "city_pop_bin": 0.8,
-      "amt_yeo_johnson": 0.20283470583231186
-    }
-  ]
-}
-```
-
-### Testing the API
-
-You can test the API using the provided client examples:
-
-```bash
-# Test with preprocessed data
-python -m src.api.client_example
-
-# Test with raw transaction data
-python -m src.api.raw_data_example
-```
-
-These will send sample requests to the API and display the responses.
-
-## Environment Variables
-
-The application uses environment variables to configure access to external services.
-
-### Required Variables
-
-| Variable             | Description                         | Required |
-|----------------------|-------------------------------------|----------|
-| `VITE_OPENCAGE_TOKEN`| API key for OpenCage Geocoding      | ✅       |
-
-You can get a free API token from [https://opencagedata.com](https://opencagedata.com) — no payment method required.
-
----
-
-### How to Set Up
-
-1. Copy the example file:
-
-    ```bash
-    cp .env.example .env
-    ```
-
-2. Open .env and insert your token:
-
-   ```dotenv
-   VITE_OPENCAGE_TOKEN=your_opencage_api_key
-   ```
+- Multiple ML models (Decision Tree, Logistic Regression, XGBoost)
+- Data preprocessing pipeline
+- Model evaluation and comparison
+- API for real-time and batch predictions
+- Web frontend for interactive testing
+- MLflow for experiment tracking
+- DVC for data and model versioning
 
 ## Running locally with Docker Compose
 
-This project uses `docker-compose` to serve the production-ready frontend through Nginx, with proxying of `/api/*` requests to a locally running ML model.
+This project uses `docker-compose` to serve a locally running ML model with all necessary components.
 
--  ⚠️ The `model` service is not included in this setup yet.  
-- For now, make sure your ML API is running on your host machine at `localhost:5001`.  
-- In the future, this will be replaced with a dedicated `model` service.
+### Prerequisites
 
-To run the frontend + proxy setup locally:
+1. Docker and Docker Compose installed
+2. Copy `.env.example` to `.env` and fill in required values.
+All values like keys and username / passwords will be provided to the project reviewers by email.
+   ```bash
+   cp .env.example .env
+   ```
+
+### Starting the services
+
+To run the project:
 
 ```bash
 docker compose up --build
 ```
 
-then open your browser at http://localhost:3000
+Once running, you can access:
+- Web frontend: http://localhost:3000
+- API endpoint: http://localhost:5001
+- MLflow UI: http://localhost:5000
+- MinIO (S3-compatible storage): http://localhost:9001 (console)
+
+## API Usage
+
+### Batch Predictions
+
+You can make batch predictions by sending a POST request to:
+
+```
+http://localhost:5001/predict
+```
+
+Example request body:
+
+```json
+{
+  "transactions": [
+    {
+        "trans_date_trans_time": "2020-06-21 12:15:15",
+        "cc_num": "3591919803438423",
+        "merchant": "fraud_Haley Group",
+        "category": "misc_pos",
+        "amt": 6000000.05,
+        "first": "Brian",
+        "last": "",
+        "gender": "",
+        "street": "",
+        "city": "",
+        "state": "",
+        "zip": "",
+        "lat": 0,
+        "long": 0,
+        "city_pop": 0,
+        "job": "Set designer",
+        "dob": "1987-07-25",
+        "trans_num": "2159175b9efe66dc301f149d3d5abf8c",
+        "unix_time": 1371816915,
+        "merch_lat": 28.812398,
+        "merch_long": -80.883061
+    },
+    {
+        "trans_date_trans_time": "2020-06-21 12:15:17",
+        "cc_num": "3526826139003047",
+        "merchant": "fraud_Johnston-Casper",
+        "category": "travel",
+        "amt": 3.19,
+        "first": "Nathan",
+        "last": "",
+        "gender": "",
+        "street": "",
+        "city": "",
+        "state": "",
+        "zip": "",
+        "lat": 0,
+        "long": 0,
+        "city_pop": 0,
+        "job": "Furniture designer",
+        "dob": "1955-07-06",
+        "trans_num": "57ff021bd3f328f8738bb535c302a31b",
+        "unix_time": 1371816917,
+        "merch_lat": 44.959148,
+        "merch_long": -85.884734
+    }
+  ]
+}
+```
+
+## Development
+
+For information about the development workflow using Git, DVC, and MLflow, see [Development Process](docs/development_process.md).
+
+### Project Structure
+
+- `src/`: Source code
+  - `api/`: API implementation
+  - `dataprocessing/`: Data preprocessing scripts
+  - `frontend/`: Web UI implementation
+  - `libs/`: Shared libraries
+  - `models/`: ML model implementations
+  - `proxy/`: Nginx configuration
+  - `tests/`: Test suite
+- `data/`: Training and test datasets (managed by DVC)
+- `outputs/`: Model artifacts and preprocessed data
+- `docs/`: Documentation
+
+## CI/CD Pipeline
+
+The project includes GitHub Actions workflows for continuous integration and deployment:
+- Frontend CI: `frontend_ci.yml`
+- ML Pipeline: `pipeline.yml`
+
+For more details on the CI/CD flow, see `ci-cd-flow.md`.
