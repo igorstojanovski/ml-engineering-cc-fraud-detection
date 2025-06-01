@@ -139,6 +139,35 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
     with open("classification_report.json", "w") as f:
         json.dump(report, f, indent=4)
     mlflow.log_artifact("classification_report.json")
+
+    # Save DVC metrics (with type casting for JSON)
+    dvc_metrics = {
+        "accuracy": float(report["accuracy"]),
+        "macro_avg_f1": float(report["macro avg"]["f1-score"]),
+        "weighted_avg_f1": float(report["weighted avg"]["f1-score"]),
+        "class_0_precision": float(report["0"]["precision"]),
+        "class_0_recall": float(report["0"]["recall"]),
+        "class_0_f1": float(report["0"]["f1-score"]),
+        "class_1_precision": float(report["1"]["precision"]),
+        "class_1_recall": float(report["1"]["recall"]),
+        "class_1_f1": float(report["1"]["f1-score"]),
+        "true_positive": int(true_positive),
+        "true_negative": int(true_negative),
+        "false_positive": int(false_positive),
+        "false_negative": int(false_negative),
+        "best_cv_score": float(grid_search.best_score_),
+    }
+
+    # Add best hyperparameters (cast if needed)
+    for key, value in grid_search.best_params_.items():
+        dvc_metrics[key] = (
+            value if isinstance(value, (str, int, float, bool)) else str(value)
+        )
+
+    # Save to file
+    with open("outputs/metrics/decision_tree_metrics.json", "w") as f:
+        json.dump(dvc_metrics, f, indent=4)
+
     mlflow.end_run()
 
     with open("outputs/models/decision_tree_run_metadata.json", "w") as f:
