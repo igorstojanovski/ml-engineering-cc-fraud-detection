@@ -1,11 +1,17 @@
 import os
 
 import mlflow
-import mlflow.sklearn
 import pandas as pd
 from flask import Flask, jsonify, request
+import pickle
+import sys
 
-from src.constants import MLFLOW_URI, MLFLOW_MODEL_URI
+# Add the project root to the path to ensure correct imports
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+from src.constants import MLFLOW_URI, MODEL_NAME
 from src.libs.preprocessorLib import FraudDetectionConfig, create_preprocessing_pipeline
 
 # Initialize Flask app
@@ -20,14 +26,28 @@ mlflow.set_tracking_uri(uri=MLFLOW_URI)
 def load_model():
     """
     Load the best model from MLflow model registry
+    Use this method only after your models are deployed to prod
+    Remote mlflow instance
     """
-    model_uri = MLFLOW_MODEL_URI
-    model = mlflow.sklearn.load_model(model_uri)
+    # Load the model by alias (e.g., "production")
+    model = mlflow.sklearn.load_model(model_uri=f"models:/{MODEL_NAME}@production")
+    return model
+
+
+def load_model_dev():
+    """
+    Use this method while in development to take the latest model pushed in DVC tracked folder
+    """
+    model_path = "outputs/models/model.pkl"
+
+    # Load the model
+    with open(model_path, "rb") as f:
+        model = pickle.load(f)
     return model
 
 
 # Load model at startup
-model = load_model()
+model = load_model_dev()
 
 
 @app.route("/", methods=["GET"])
