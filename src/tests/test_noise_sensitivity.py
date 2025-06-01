@@ -1,13 +1,20 @@
 import unittest
 
-import mlflow
-import mlflow.sklearn
 import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from sklearn.model_selection import train_test_split
 
-from src.constants import MODEL_URI, TARGET_COLUMN, TRAIN_DATASET_FILE_NAME
+import os
+import sys
+import pickle
+
+# Add the project root to the path to ensure correct imports
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+from src.constants import TARGET_COLUMN, TRAIN_DATASET_FILE_NAME
 from src.libs.libs import SMOTESampler
 
 
@@ -54,9 +61,9 @@ class TestNoiseSensitivity(unittest.TestCase):
 
     @staticmethod
     def load_model():
-        """Load the best model from MLflow model registry."""
-        model_uri = MODEL_URI
-        model = mlflow.sklearn.load_model(model_uri)
+        model_uri = "outputs/models/model.pkl"
+        with open(model_uri, "rb") as f:
+            model = pickle.load(f)
         return model
 
     @staticmethod

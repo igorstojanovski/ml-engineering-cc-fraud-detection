@@ -2,25 +2,35 @@ import os
 import unittest
 
 import matplotlib.pyplot as plt
-import mlflow
-import mlflow.sklearn
 import numpy as np
 import pandas as pd
 from sklearn.inspection import permutation_importance
 from sklearn.model_selection import train_test_split
 
-from src.constants import MODEL_URI, TARGET_COLUMN, TRAIN_DATASET_FILE_NAME
+import sys
+import pickle
+
+# Add the project root to the path to ensure correct imports
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+from src.constants import TARGET_COLUMN, TRAIN_DATASET_FILE_NAME
 from src.libs.libs import SMOTESampler
 
 
 class TestModelExplainability(unittest.TestCase):
     """Test class to evaluate model explainability using permutation importance."""
 
+    def load_model():
+        model_uri = "outputs/models/model.pkl"
+        with open(model_uri, "rb") as f:
+            model = pickle.load(f)
+        return model
+
     @classmethod
     def setUpClass(cls):
         """Set up test data and model once for all test methods."""
-        # Define model URI
-        cls.MODEL_URI = MODEL_URI
 
         # Load into DataFrame
         cls.train_preprocessed = pd.read_csv(TRAIN_DATASET_FILE_NAME)
@@ -41,8 +51,7 @@ class TestModelExplainability(unittest.TestCase):
             cls.X_train_smote, cls.y_train_smote, test_size=0.3, random_state=42
         )
 
-        # Load the model
-        cls.model = mlflow.sklearn.load_model(cls.MODEL_URI)
+        cls.model = cls.load_model()
 
         # Create output directory for results if it doesn't exist
         os.makedirs("output", exist_ok=True)
