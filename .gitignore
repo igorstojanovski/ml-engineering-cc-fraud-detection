@@ -2,7 +2,7 @@
 .env
 .venv
 /metrics
-/outputs
+
 /mlruns
 /src/__pycache__
 *.pyc
@@ -10,5 +10,3 @@
 constants.py
 
 mlartifacts/
-output/
-data/
