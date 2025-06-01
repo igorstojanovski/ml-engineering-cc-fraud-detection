@@ -20,6 +20,3 @@ TARGET_COLUMN = "is_fraud"
 
 MODEL_NAME = "model"  # defaulted to model it is the name of the model after deployment
 MLFLOW_URI = os.environ.get("MLFLOW_URI", "http://127.0.0.1:5000/")
-MLFLOW_MODEL_URI = os.environ.get(
-    "MLFLOW_MODEL_URI", "/home/ezdonka/repos/BTH-ML/ml-engineering-cc-fraud-detection/outputs"
-)
