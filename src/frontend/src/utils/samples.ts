@@ -53,7 +53,7 @@ export const sample2: TransactionFormData = {
   cc_num: "9876543210987654",
 };
 
-export const fraudSample: TransactionFormData = {
+export const fraudSample1: TransactionFormData = {
   trans_date_trans_time: dayjs("2020-06-21 12:14:33"),
   cc_num: "3573030041201292",
   merchant: "fraud_Sporer-Keebler",
@@ -75,4 +75,28 @@ export const fraudSample: TransactionFormData = {
   unix_time: 1371816873,
   merch_lat: 39.450498,
   merch_long: -109.960431,
+};
+
+export const fraudSample2: TransactionFormData = {
+  trans_date_trans_time: dayjs("2020-06-21 22:06:39"),
+  cc_num: "3560725013359375",
+  merchant: "fraud_Hamill-D'Amore",
+  category: "health_fitness",
+  amt: 24.84,
+  first: "FirstName1",
+  last: "LastName1",
+  gender: "F",
+  street: "123 Fake St",
+  city: "City1",
+  state: "ST",
+  zip: "12345",
+  lat: 32.575873,
+  long: -102.60429,
+  city_pop: 23,
+  job: "Unknown",
+  dob: dayjs("1990-01-01"),
+  trans_num: "16bf2e46c54369a8eab2214649506425",
+  unix_time: 1371852399,
+  merch_lat: 39.450498,
+  merch_long: -102.60429,
 };

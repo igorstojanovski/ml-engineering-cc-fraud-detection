@@ -1,6 +1,6 @@
 import { Button, Col, Row } from "antd";
 import type { TransactionFormData } from "../types/transaction";
-import { fraudSample, sample1, sample2 } from "../utils/samples";
+import { fraudSample1, fraudSample2, sample1, sample2 } from "../utils/samples";
 
 interface SampleButtonsProps {
   onSubmit: (data: TransactionFormData) => void;
@@ -15,7 +15,10 @@ export const SampleButtons = ({ onSubmit }: SampleButtonsProps) => (
       <Button onClick={() => onSubmit(sample2)}>Legit Sample 2</Button>
     </Col>
     <Col>
-      <Button onClick={() => onSubmit(fraudSample)}>Fraud Sample 1</Button>
+      <Button onClick={() => onSubmit(fraudSample1)}>Fraud Sample 1</Button>
+    </Col>
+    <Col>
+      <Button onClick={() => onSubmit(fraudSample2)}>Fraud Sample 2</Button>
     </Col>
   </Row>
 );
