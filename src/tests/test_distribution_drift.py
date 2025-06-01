@@ -3,6 +3,13 @@ import unittest
 import pandas as pd
 from scipy.stats import ks_2samp
 from sklearn.model_selection import train_test_split
+import os
+import sys
+
+# Add the project root to the path to ensure correct imports
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 from src.constants import TARGET_COLUMN, TRAIN_DATASET_FILE_NAME
 from src.libs.libs import SMOTESampler
