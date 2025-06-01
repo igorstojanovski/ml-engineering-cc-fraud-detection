@@ -170,7 +170,7 @@ with mlflow.start_run(run_name="decision_tree_experiment") as run:
 
     mlflow.end_run()
 
-    with open("outputs/models/decision_tree_run_metadata.json", "w") as f:
+    with open("outputs/models/model_run_metadata.json", "w") as f:
         json.dump({"run_id": run.info.run_id, "artifact_path": "model"}, f)
 
     # Save the trained model as a .pkl file for DVC to track
