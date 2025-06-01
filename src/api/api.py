@@ -21,6 +21,7 @@ app = Flask(__name__)
 mlflow.set_tracking_uri(uri=MLFLOW_URI)
 
 # Load the model at startup
+ENV = os.getenv("ENV", "development")
 
 
 def load_model():
@@ -38,7 +39,7 @@ def load_model_dev():
     """
     Use this method while in development to take the latest model pushed in DVC tracked folder
     """
-    model_path = "outputs/models/model.pkl"
+    model_path = MODEL_NAME
 
     # Load the model
     with open(model_path, "rb") as f:
@@ -47,7 +48,10 @@ def load_model_dev():
 
 
 # Load model at startup
-model = load_model_dev()
+if ENV == "production":
+    model = load_model()
+else:
+    model = load_model_dev()
 
 
 @app.route("/", methods=["GET"])
