@@ -11,7 +11,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from src.constants import MLFLOW_URI, MODEL_NAME
+from src.constants import MLFLOW_URI, MODEL_NAME, LOCAL_MODEL_PATH
 from src.libs.preprocessorLib import FraudDetectionConfig, create_preprocessing_pipeline
 
 # Initialize Flask app
@@ -39,10 +39,9 @@ def load_model_dev():
     """
     Use this method while in development to take the latest model pushed in DVC tracked folder
     """
-    model_path = MODEL_NAME
 
     # Load the model
-    with open(model_path, "rb") as f:
+    with open(LOCAL_MODEL_PATH, "rb") as f:
         model = pickle.load(f)
     return model
 
