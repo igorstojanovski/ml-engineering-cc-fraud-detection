@@ -13,7 +13,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from src.constants import TARGET_COLUMN, TRAIN_DATASET_FILE_NAME
+from src.constants import TARGET_COLUMN, TRAIN_DATASET_FILE_NAME, LOCAL_MODEL_PATH
 from src.libs.libs import SMOTESampler
 
 
@@ -21,7 +21,7 @@ class TestFeatureImportance(unittest.TestCase):
     """Test class to analyze and validate feature importance."""
 
     def load_model():
-        model_uri = "outputs/models/model.pkl"
+        model_uri = LOCAL_MODEL_PATH
         with open(model_uri, "rb") as f:
             model = pickle.load(f)
         return model
