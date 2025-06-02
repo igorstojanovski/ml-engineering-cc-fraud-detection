@@ -141,3 +141,22 @@ The project includes GitHub Actions workflows for continuous integration and dep
 - ML Pipeline: `pipeline.yml`
 
 For more details on the CI/CD flow, see `ci-cd-flow.md`.
+
+## How to run the tests
+
+under src/tests one can find various tests which are written in python
+as such they are runnable as normal python file. 
+Example:
+```
+/bin/python src/tests/test_distribution_drift.py
+```
+
+Some ML related tests use the training data specified under TRAIN_DATASET_FILE_NAME.
+Other ML related tests use the model specified under the constant LOCAL_MODEL_PATH.
+In order to have the data and the model run
+```
+DVC pull
+```
+for the very first time.
+In order to run the tests for newly created data, specify the path to the data in TRAIN_DATASET_FILE_NAME
+In order to run the tests for newly created model, specify the model under LOCAL_MODEL_PATH
