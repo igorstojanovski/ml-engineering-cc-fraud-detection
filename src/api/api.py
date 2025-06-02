@@ -5,6 +5,7 @@ import pandas as pd
 from flask import Flask, jsonify, request
 import pickle
 import sys
+import joblib
 
 # Add the project root to the path to ensure correct imports
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
@@ -12,7 +13,6 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from src.constants import MLFLOW_URI, MODEL_NAME, LOCAL_MODEL_PATH
-from src.libs.preprocessorLib import FraudDetectionConfig, create_preprocessing_pipeline
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -228,21 +228,9 @@ def preprocess_data(df):
         # If raw data, apply preprocessing pipeline
         print("Applying preprocessing pipeline to raw data")
 
-        # Create config with default values
-        config = FraudDetectionConfig(
-            ds_url="",  # Not needed as we're not loading from file
-            output_filename="",  # Not saving to file
-            context="api",
-            name="API Prediction",
-        )
-
-        # Create and apply preprocessing pipeline
-        preprocessor = create_preprocessing_pipeline(config)
-
-        # Fit and transform the data
-        preprocessor.fit(df)
+        # load preprocessing pipeline
+        preprocessor = joblib.load("outputs/models/final_pipeline.pkl")
         processed_df = preprocessor.transform(df)
-
         print(f"Preprocessed data shape: {processed_df.shape}")
         return processed_df
 
