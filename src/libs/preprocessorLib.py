@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.pipeline import Pipeline
+import joblib
 
 from src import constants
 from src.libs.libs import (
@@ -163,7 +164,6 @@ def log_to_mlflow(config, preprocessed, fig1, fig2, fig3):
     mlflow.set_experiment(config.experiment_name)
 
     with mlflow.start_run(run_name=config.context):
-        mlflow.log_artifact(config.output_filename)
 
         dataset = mlflow.data.from_pandas(
             preprocessed,
@@ -291,7 +291,8 @@ def main(config):
 
     # Create and apply preprocessing pipeline
     preprocessor = create_preprocessing_pipeline(config)
-    preprocessor.fit(X_raw)
+    preprocessor = preprocessor.fit(X_raw)
+    joblib.dump(preprocessor, "outputs/models/final_pipeline.pkl")
     preprocessed = preprocessor.transform(X_raw)
 
     # Add target column back to preprocessed data
