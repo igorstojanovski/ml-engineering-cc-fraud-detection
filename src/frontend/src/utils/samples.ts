@@ -27,7 +27,7 @@ export const sample1: TransactionFormData = {
   cc_num: "1234567890123456",
 };
 
-export const sample2: TransactionFormData = {
+export const fraudSample1: TransactionFormData = {
   trans_date_trans_time: dayjs("2020-12-01 08:45:10"),
   first: "Bob",
   last: "Anderson",
@@ -39,7 +39,6 @@ export const sample2: TransactionFormData = {
   amt: 42.95,
   trans_num: "xyz789-sample-2",
   unix_time: 1606812310,
-
   street: "456 Elm St",
   city: "San Francisco",
   state: "CA",
@@ -47,56 +46,7 @@ export const sample2: TransactionFormData = {
   lat: 37.7749,
   long: -122.4194,
   city_pop: 870000,
-
   merch_lat: 37.7792,
   merch_long: -122.4173,
   cc_num: "9876543210987654",
-};
-
-export const fraudSample1: TransactionFormData = {
-  trans_date_trans_time: dayjs("2020-06-21 12:14:33"),
-  cc_num: "3573030041201292",
-  merchant: "fraud_Sporer-Keebler",
-  category: "personal_care",
-  amt: 29.84,
-  first: "Joanne",
-  last: "Williams",
-  gender: "F",
-  street: "3638 Marsh Union",
-  city: "Altonah",
-  state: "UT",
-  zip: "84002",
-  lat: 40.3207,
-  long: -110.436,
-  city_pop: 302,
-  job: "Sales professional, IT",
-  dob: dayjs("1990-01-17"),
-  trans_num: "324cc204407e99f51b0d6ca0055005e7",
-  unix_time: 1371816873,
-  merch_lat: 39.450498,
-  merch_long: -109.960431,
-};
-
-export const fraudSample2: TransactionFormData = {
-  trans_date_trans_time: dayjs("2020-06-21 22:06:39"),
-  cc_num: "3560725013359375",
-  merchant: "fraud_Hamill-D'Amore",
-  category: "health_fitness",
-  amt: 24.84,
-  first: "FirstName1",
-  last: "LastName1",
-  gender: "F",
-  street: "123 Fake St",
-  city: "City1",
-  state: "ST",
-  zip: "12345",
-  lat: 32.575873,
-  long: -102.60429,
-  city_pop: 23,
-  job: "Unknown",
-  dob: dayjs("1990-01-01"),
-  trans_num: "16bf2e46c54369a8eab2214649506425",
-  unix_time: 1371852399,
-  merch_lat: 39.450498,
-  merch_long: -102.60429,
 };
