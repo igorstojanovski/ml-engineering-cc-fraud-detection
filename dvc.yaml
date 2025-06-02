@@ -6,6 +6,7 @@ stages:
     - src/dataprocessing/preprocessTrain.py
     outs:
     - outputs/preprocessed/train_preprocessed.csv
+    - outputs/models/final_pipeline.pkl
   train_model:
     cmd: PYTHONPATH=. python src/models/DecisionTree.py
     deps:

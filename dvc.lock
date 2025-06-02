@@ -12,6 +12,10 @@ stages:
       md5: 8a84b71fc164f1e1658ab30fc52f129d
       size: 709
     outs:
+    - path: outputs/models/final_pipeline.pkl
+      hash: md5
+      md5: 168866f20513663379f007fd3f1c70f2
+      size: 5547
     - path: outputs/preprocessed/train_preprocessed.csv
       hash: md5
       md5: b71062ee68bb87035a5970d8b95c881e
