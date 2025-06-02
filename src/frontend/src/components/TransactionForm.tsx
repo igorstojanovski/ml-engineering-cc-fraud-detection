@@ -32,6 +32,23 @@ const genderOptions = [
   { value: "M", label: "Male" },
 ];
 
+const categoryOptions = [
+  { value: "entertainment", label: "Entertainment" },
+  { value: "food_dining", label: "Food Dining" },
+  { value: "gas_transport", label: "Gas Transport" },
+  { value: "grocery_net", label: "Grocery Net" },
+  { value: "grocery_pos", label: "Grocery Pos" },
+  { value: "health_fitness", label: "Health Fitness" },
+  { value: "home", label: "Home" },
+  { value: "kids_pets", label: "Kids Pets" },
+  { value: "misc_net", label: "Misc Net" },
+  { value: "misc_pos", label: "Misc Pos" },
+  { value: "personal_care", label: "Personal Care" },
+  { value: "shopping_net", label: "Shopping Net" },
+  { value: "shopping_pos", label: "Shopping Pos" },
+  { value: "travel", label: "Travel" },
+];
+
 export const TransactionForm = ({
   isLoading = false,
   onSubmit,
@@ -208,7 +225,7 @@ export const TransactionForm = ({
             label="Category"
             rules={[{ required: true }]}
           >
-            <Input />
+            <Select options={categoryOptions} />
           </Form.Item>
         </Col>
         <Col span={12}>
