@@ -1,4 +1,4 @@
-name: Python Lint
+name: Python Lint and Metrics Check
 
 on:
   push:
@@ -18,15 +18,41 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'  # or any version you use
+          python-version: '3.11'
 
       - name: Install flake8
         run: pip install flake8==7.2.0
 
       - name: Run flake8
         run: flake8 .
+
       - name: Install black
         run: pip install black
 
       - name: Check formatting with black
         run: black --check .
+
+  metrics-check:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Important for comparing against main
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install dvc[s3]  # or just `dvc` if you're not using remote storage
+          pip install jq
+
+      - name: Compare metrics with main
+        run: |
+          dvc metrics diff origin/main --targets metrics.json --json \
+          | jq '.["metrics.json"].data as $data | ($data.accuracy.diff < 0 or $data.macro_avg_f1.diff < 0)' \
+          | grep true && echo "❌ Regression detected" && exit 1 || echo "✅ Metrics passed"
