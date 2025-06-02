@@ -1,0 +1,50 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🐍 Set up Python & install DVC
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - run: pip install dvc[s3]
+
+      - name: 📦 DVC Pull
+        run: dvc pull
+
+      - name: 🐳 Docker Compose Up
+        run: docker compose up -d --build
+
+      - name: ⏳ Wait for frontend (nginx at :3000)
+        run: |
+          for i in {1..30}; do
+            curl -sSf http://localhost:3000 && break
+            echo "Waiting for frontend (attempt $i)..."
+            sleep 5
+          done
+
+      - name: 🧪 Install Playwright dependencies
+        working-directory: src/e2e
+        run: npm install
+
+      - name: ▶️ Run E2E tests
+        working-directory: src/e2e
+        run: npm run e2e
+
+      - name: 🧹 Teardown Docker Compose
+        if: always()
+        run: docker compose down -v
