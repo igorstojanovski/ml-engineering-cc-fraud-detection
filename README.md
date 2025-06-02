@@ -14,6 +14,16 @@ The system uses machine learning models to detect potentially fraudulent credit 
 - MLflow for experiment tracking
 - DVC for data and model versioning
 
+## Running locally
+
+Do DVC pull first. This will bring in all the necessary dependencies for running the project locally.
+Important files will be placed in the outputs folder.
+The dependencies include decision_tree_model.pkl file and final_pipeline.pkl file. 
+The decision_tree_model file has one example ML model which the backend can use for doing predictions.
+The final_pipeline.pkl file ensures that the same preprocessing steps applied during model training are consistently applied to raw production data.
+Credentials like username and password for the S3 bucket connected with DVC will be sent to you upon your request.
+❗Without credentials DVC pill does not work.
+
 ## Running locally with Docker Compose
 
 This project uses `docker-compose` to serve a locally running ML model with all necessary components.
