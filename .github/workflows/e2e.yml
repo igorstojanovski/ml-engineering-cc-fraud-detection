@@ -19,7 +19,7 @@ jobs:
       - name: 🐍 Set up Python & install DVC
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
+          python-version: 3.9.22
 
       - run: pip install dvc[s3]
 
